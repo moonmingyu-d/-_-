@@ -74,8 +74,14 @@
   .tag{
     display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;
     background:var(--moss-dim);color:var(--moss);font-weight:700;margin-left:6px;vertical-align:1px;
+    border:0;font-family:inherit;cursor:pointer;position:relative;
   }
   .tag.pend{background:var(--gold-dim);color:var(--gold);}
+  .tag:hover,.tag:focus{filter:brightness(0.96);}
+  @media (pointer:coarse){
+    .tag::after{content:"";position:absolute;left:50%;top:50%;
+      width:100%;height:38px;min-width:64px;transform:translate(-50%,-50%);}
+  }
 
   /* ---------- days ---------- */
   .day{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:11px;overflow:hidden;}
@@ -547,7 +553,8 @@ function renderBookings(){
     '<div class="card"><div style="display:flex;gap:8px;align-items:flex-start;">' +
       '<div style="flex:1;min-width:0;">' +
         '<div class="card-title">' + ed(clean(b.t), 'bookings.'+i+'.t') +
-          '<span class="tag' + (b.done ? '' : ' pend') + '">' + (b.done ? '예약 완료' : '예약 전') + '</span></div>' +
+          '<button class="tag' + (b.done ? '' : ' pend') + '" data-toggle-booking="' + i + '" ' +
+            'aria-pressed="' + (b.done ? 'true' : 'false') + '">' + (b.done ? '예약 완료' : '예약 전') + '</button></div>' +
         '<div class="card-sub">' + ed(clean(b.s), 'bookings.'+i+'.s') + '</div>' +
         '<div class="card-sub" style="margin-top:3px;color:var(--water);font-weight:700;">' + ed(clean(b.p), 'bookings.'+i+'.p') + '</div>' +
       '</div>' + delBtn('bookings', i) +
@@ -966,6 +973,14 @@ document.addEventListener('click', e => {
     const it = state.checklist[+p[0]].items[+p[1]];
     it.d = !it.d;
     renderChecklist(); markDirty('checklist');
+    return;
+  }
+
+  const btog = e.target.closest('[data-toggle-booking]');
+  if(btog){
+    const b = state.bookings[+btog.dataset.toggleBooking];
+    b.done = !b.done;
+    renderBookings(); markDirty('bookings');
     return;
   }
 
