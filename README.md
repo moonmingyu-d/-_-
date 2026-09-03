@@ -62,21 +62,15 @@ const firebaseConfig = {
 };
 ```
 
-### 1-6. 앱에 붙여넣기
-`public/index.html` 을 열면 **맨 위 `<script type="module">` 바로 아래**에
-아래 블록이 있습니다. 이 여섯 줄의 `PASTE_...` 자리를 위에서 복사한 값으로 바꿉니다.
+### 1-6. 앱에 붙여넣기 — ✅ 완료됨
 
-```js
-const FIREBASE_CONFIG = {
-  apiKey:            "PASTE_API_KEY",
-  authDomain:        "PASTE_PROJECT_ID.firebaseapp.com",
-  ...
-};
-```
+`public/index.html` 의 `FIREBASE_CONFIG` 에 프로젝트 `mgsg-344be` 의 설정값이
+이미 들어가 있습니다. 더 손대실 것 없습니다.
 
 > **이 값들은 비밀번호가 아닙니다.** 원래 웹페이지에 그대로 공개되는 값이라
-> 누가 봐도 괜찮습니다. 실제 잠금장치는 4단계에서 넣은 **보안 규칙**과
-> **방 코드**입니다.
+> 누가 봐도 괜찮습니다. 실제 잠금장치는 1-4단계의 **보안 규칙**과 **방 코드**입니다.
+> (더 조이고 싶으시면 Google Cloud 콘솔에서 이 API 키에 HTTP 리퍼러 제한을 걸어
+> Netlify 주소에서만 쓰이게 할 수 있습니다. 필수는 아닙니다.)
 
 ### 1-7. (권장) Netlify 주소를 허용 목록에 넣기
 배포 후 주소를 알게 되면, Firebase 콘솔 **Authentication → Settings(설정) →
@@ -183,3 +177,23 @@ npm run test:sync       # 브라우저 창 2개로 실시간 동기화 13가지 
   추가 안전망으로 `localStorage` 에도 사본을 남깁니다.
 - Firebase SDK 는 CDN 대신 `public/vendor/firebase.js` 로 함께 배포합니다.
   외부 CDN 사정과 무관하게 항상 뜹니다.
+
+---
+
+## 잘 안 될 때
+
+앱 아래쪽 상태줄에 원인이 그대로 나옵니다. 자주 나오는 두 가지입니다.
+
+| 증상 | 원인 | 해결 |
+|---|---|---|
+| "Firebase 콘솔 → Authentication → 로그인 방법에서 익명을 켜주세요" | Authentication을 아직 시작하지 않았거나 익명 로그인이 꺼져 있음 | **1-2단계** |
+| "이 방을 열 권한이 없어요" / "저장 거부됨" | Firestore를 안 만들었거나 보안 규칙을 안 붙여넣음 | **1-3, 1-4단계** |
+
+설정이 제대로 됐는지 한 번에 확인하려면:
+
+```bash
+npm run verify:live
+```
+
+실제 프로젝트에 붙어서 익명 로그인·보안 규칙·저장·읽기를 하나씩 검사하고,
+안 되는 항목은 이유를 알려줍니다.
