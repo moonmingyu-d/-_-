@@ -6,17 +6,23 @@ import { mkdirSync, cpSync, readFileSync, writeFileSync, rmSync } from 'node:fs'
 import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 
+/* LIVE=1 로 실행하면 에뮬레이터가 아니라 실제 Firebase 프로젝트에 붙습니다. */
+const LIVE = process.env.LIVE === '1';
 const SITE = '/tmp/claude-0/-home-user----/f0e616e8-fe43-59aa-bad2-3ae2dd85fdc9/scratchpad/site';
 const PORT = 8788;
-const ROOM = 'bali-test-' + Math.random().toString(36).slice(2, 8) + '-room';
+const ROOM = LIVE
+  ? 'zzz-verify-delete-me-02'                                   // 실서버에선 방을 하나만 씁니다
+  : 'bali-test-' + Math.random().toString(36).slice(2, 8) + '-room';
 
-/* ---- 에뮬레이터용 설정값을 넣은 사본을 만든다 ---- */
 rmSync(SITE, { recursive: true, force: true });
 mkdirSync(SITE, { recursive: true });
 cpSync('public', SITE, { recursive: true });
-const html = readFileSync(`${SITE}/index.html`, 'utf8').replace(
-  /const FIREBASE_CONFIG = \{[\s\S]*?\n\};/,
-  `const FIREBASE_CONFIG = {
+
+if(!LIVE){
+  /* ---- 에뮬레이터용 설정값으로 바꿔치기 ---- */
+  const html = readFileSync(`${SITE}/index.html`, 'utf8').replace(
+    /const FIREBASE_CONFIG = \{[\s\S]*?\n\};/,
+    `const FIREBASE_CONFIG = {
   apiKey: "demo-key",
   authDomain: "demo-bali.firebaseapp.com",
   projectId: "demo-bali",
@@ -24,18 +30,19 @@ const html = readFileSync(`${SITE}/index.html`, 'utf8').replace(
   messagingSenderId: "000000000000",
   appId: "1:000000000000:web:demo"
 };`);
-assert.ok(html.includes('projectId: "demo-bali"'), '설정 치환 실패');
-writeFileSync(`${SITE}/index.html`, html);
+  assert.ok(html.includes('projectId: "demo-bali"'), '설정 치환 실패');
+  writeFileSync(`${SITE}/index.html`, html);
+}
 
 const server = spawn('python3', ['-m', 'http.server', String(PORT), '--directory', SITE],
   { stdio: 'ignore' });
-const BASE = `http://127.0.0.1:${PORT}/index.html?emu=1`;
+const BASE = `http://127.0.0.1:${PORT}/index.html` + (LIVE ? '' : '?emu=1');
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const pass = [];
 function ok(name){ pass.push(name); console.log('  ✓ ' + name); }
 
-async function until(fn, label, ms = 15000){
+async function until(fn, label, ms = LIVE ? 40000 : 15000){
   const t0 = Date.now();
   let last;
   while(Date.now() - t0 < ms){
@@ -81,8 +88,15 @@ async function caretToEnd(page, path){
 
 let browser;
 try{
-  browser = await chromium.launch({ headless: true, executablePath: '/opt/pw-browsers/chromium' });
-  console.log(`\n방 코드: ${ROOM}\n`);
+  browser = await chromium.launch({
+    headless: true,
+    executablePath: '/opt/pw-browsers/chromium',
+    // 실서버로 나갈 때는 이 컨테이너의 아웃바운드 프록시를 거쳐야 합니다.
+    ...(LIVE && process.env.HTTPS_PROXY
+        ? { proxy: { server: process.env.HTTPS_PROXY, bypass: '127.0.0.1,localhost' } }
+        : {})
+  });
+  console.log(`\n대상: ${LIVE ? '실제 Firebase 프로젝트 (mgsg-344be)' : '로컬 에뮬레이터'} · 방 ${ROOM}\n`);
 
   /* ---------- 1. 두 사람이 같은 방에 접속 ---------- */
   const A = await openApp(browser, '남편');

@@ -160,7 +160,9 @@ npm install
 npm run build:vendor    # Firebase SDK 를 public/vendor/firebase.js 로 묶기
 npm run emulators       # 로컬 Firebase 에뮬레이터 (Java 필요)
 npm run test:rules      # 보안 규칙 12가지 검증
-npm run test:sync       # 브라우저 창 2개로 실시간 동기화 13가지 검증
+npm run test:sync       # 브라우저 창 2개로 실시간 동기화 13가지 검증 (에뮬레이터)
+LIVE=1 npm run test:sync   # 같은 검증을 실제 Firebase 프로젝트로 (인터넷 직결 필요)
+npm run verify:live     # 실제 프로젝트의 로그인·규칙·저장·읽기 확인
 ```
 
 ### 어떻게 동작하나
