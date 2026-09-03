@@ -1,0 +1,19 @@
+{
+  "name": "bali-honeymoon-plan",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build:vendor": "node tools/build-vendor.mjs",
+    "emulators": "firebase emulators:start --project demo-bali --only auth,firestore",
+    "test:rules": "node --test tests/rules.test.mjs",
+    "test:sync": "node tests/sync.e2e.mjs",
+    "shots": "node tests/screenshots.mjs",
+    "serve": "python3 -m http.server 8788 --directory public"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "esbuild": "^0.25.0",
+    "firebase": "^11.10.0"
+  }
+}

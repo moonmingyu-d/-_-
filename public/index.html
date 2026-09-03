@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<title>발리 신혼여행 계획</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌴</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23F1F3EC'/><text y='.85em' font-size='84'>🌴</text></svg>">
+<meta name="apple-mobile-web-app-title" content="발리 신혼여행">
+<meta name="theme-color" content="#F1F3EC">
+<style>
+  :root{
+    --ink:#16211C;
+    --ink-soft:#4A5A52;
+    --paper:#F1F3EC;
+    --card:#FFFFFF;
+    --moss:#2E6B4B;
+    --moss-dim:#E3EDE6;
+    --water:#33707D;
+    --water-dim:#E2EDEF;
+    --gold:#A8781F;
+    --gold-dim:#F6EEDC;
+    --line:#D9DFD8;
+    --danger:#A63D2F;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  html{background:#F1F3EC;color:#16211C;color-scheme:light only;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 16px 96px;}
+
+  /* ---------- header ---------- */
+  header{padding:28px 0 18px;border-bottom:2px solid var(--ink);margin-bottom:22px;}
+  .kicker{font-size:12.5px;color:var(--moss);letter-spacing:.02em;margin:0 0 6px;font-weight:700;}
+  h1{
+    font-family:"Nanum Myeongjo","Apple SD Gothic Neo",serif;
+    font-size:30px;line-height:1.25;margin:0 0 4px;font-weight:700;letter-spacing:-.01em;
+  }
+  .sub{margin:0;color:var(--ink-soft);font-size:13.5px;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .chip{
+    background:var(--card);border:1px solid var(--line);border-radius:999px;
+    padding:5px 12px;font-size:12.5px;color:var(--ink-soft);
+  }
+  .chip b{color:var(--ink);font-weight:700;}
+  .chip.dday{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .chip.dday b{color:#fff;}
+
+  /* ---------- sections ---------- */
+  section{margin:0 0 34px;}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px;}
+  h2{
+    font-family:"Nanum Myeongjo","Apple SD Gothic Neo",serif;
+    font-size:19px;margin:0;font-weight:700;
+  }
+  .sec-note{font-size:12.5px;color:var(--ink-soft);margin:-4px 0 12px;}
+
+  /* ---------- generic card ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:13px 14px;margin-bottom:9px;position:relative;
+  }
+  .card-title{font-weight:700;font-size:15px;margin-bottom:2px;}
+  .card-sub{font-size:13px;color:var(--ink-soft);}
+  .tag{
+    display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;
+    background:var(--moss-dim);color:var(--moss);font-weight:700;margin-left:6px;vertical-align:1px;
+  }
+  .tag.pend{background:var(--gold-dim);color:var(--gold);}
+
+  /* ---------- days ---------- */
+  .day{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:11px;overflow:hidden;}
+  .day-head{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--moss);color:#fff;}
+  .day-n{
+    font-size:11.5px;font-weight:700;background:rgba(255,255,255,.22);
+    border-radius:5px;padding:2px 7px;flex:none;letter-spacing:.03em;
+  }
+  .day-title{font-weight:700;font-size:14.5px;flex:1;min-width:0;}
+  .day-date{font-size:12.5px;opacity:.9;flex:none;}
+  .day-body{padding:6px 14px 12px;}
+  .item{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);align-items:flex-start;}
+  .item:last-child{border-bottom:0;}
+  .item-time{
+    flex:none;width:62px;font-size:12.5px;font-weight:700;color:var(--water);
+    padding-top:1px;
+  }
+  .item-text{flex:1;min-width:0;font-size:14px;}
+
+  /* ---------- lists ---------- */
+  .li{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line);}
+  .li:last-child{border-bottom:0;}
+  .li-dot{flex:none;width:5px;height:5px;border-radius:50%;background:var(--moss);margin-top:9px;}
+  .li-text{flex:1;min-width:0;font-size:14px;}
+  .list-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:4px 14px 10px;margin-bottom:9px;}
+  .list-box h3{font-size:14px;margin:12px 0 2px;color:var(--moss);font-weight:700;}
+  .list-box.water h3{color:var(--water);}
+  .list-box.water .li-dot{background:var(--water);}
+  .list-box.gold h3{color:var(--gold);}
+  .list-box.gold .li-dot{background:var(--gold);}
+
+  /* ---------- checklist ---------- */
+  .chk{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line);}
+  .chk:last-child{border-bottom:0;}
+  .box{
+    flex:none;width:21px;height:21px;border:1.5px solid var(--line);border-radius:5px;
+    background:#fff;cursor:pointer;margin-top:1px;display:grid;place-items:center;
+    font-size:13px;color:#fff;transition:background .12s,border-color .12s;
+  }
+  .box[aria-checked="true"]{background:var(--moss);border-color:var(--moss);}
+  .chk-text{flex:1;min-width:0;font-size:14px;}
+  .chk[data-done="true"] .chk-text{text-decoration:line-through;color:var(--ink-soft);}
+  .meter{height:7px;background:var(--line);border-radius:99px;overflow:hidden;margin:2px 0 14px;}
+  .meter i{display:block;height:100%;background:var(--moss);border-radius:99px;transition:width .25s;}
+
+  /* ---------- budget ---------- */
+  .brow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--line);}
+  .brow:last-of-type{border-bottom:0;}
+  .b-label{flex:1;min-width:0;font-size:14px;font-weight:600;}
+  .b-note{font-size:12px;color:var(--ink-soft);font-weight:400;display:block;}
+  .b-cost{flex:none;font-size:13.5px;font-weight:700;color:var(--water);text-align:right;min-width:92px;}
+  .total{
+    background:var(--ink);color:#fff;border-radius:var(--radius);padding:14px;margin-top:12px;
+  }
+  .total-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+  .total-row + .total-row{margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,.18);}
+  .total-k{font-size:13px;opacity:.85;}
+  .total-v{font-size:16px;font-weight:700;}
+  .total-v.small{font-size:14px;}
+  .cap-meter{height:7px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;margin-top:11px;}
+  .cap-meter i{display:block;height:100%;background:#7FC8A0;border-radius:99px;transition:width .25s;}
+
+  /* ---------- editing ---------- */
+  [contenteditable]{outline:none;border-radius:4px;}
+  [contenteditable]:focus{background:#FFF8E3;box-shadow:0 0 0 2px var(--gold);}
+  .del{
+    flex:none;width:26px;height:26px;border:0;background:transparent;color:#B9C2BB;
+    font-size:17px;line-height:1;cursor:pointer;border-radius:6px;padding:0;
+  }
+  .del:hover,.del:focus{color:var(--danger);background:#F7E9E6;}
+  .add{
+    display:inline-flex;align-items:center;gap:5px;border:1px dashed var(--line);
+    background:transparent;color:var(--ink-soft);font-size:13px;font-family:inherit;
+    padding:7px 12px;border-radius:8px;cursor:pointer;margin-top:8px;
+  }
+  .add:hover,.add:focus{border-color:var(--moss);color:var(--moss);background:var(--moss-dim);}
+  .add.block{width:100%;justify-content:center;}
+  .edit-hint{font-size:12px;color:var(--ink-soft);background:var(--gold-dim);border-radius:8px;padding:9px 12px;margin-bottom:20px;}
+
+  /* ---------- save bar ---------- */
+  .bar{
+    position:fixed;left:0;right:0;bottom:0;background:rgba(241,243,236,.97);
+    backdrop-filter:blur(8px);border-top:1px solid var(--line);
+    padding:8px 16px calc(8px + env(safe-area-inset-bottom));z-index:20;
+  }
+  .bar-in{max-width:760px;margin:0 auto;}
+  .status{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:7px;line-height:1.4;}
+  .status.ok{color:var(--moss);}
+  .status.err{color:var(--danger);}
+  .btn-row{display:flex;gap:7px;}
+  .btn{
+    border:1px solid var(--line);background:var(--card);color:var(--ink-soft);
+    font-family:inherit;font-size:13px;padding:9px 10px;border-radius:8px;cursor:pointer;flex:1;
+  }
+  .btn:hover,.btn:focus{border-color:var(--ink-soft);color:var(--ink);}
+  .btn.primary{background:var(--moss);border-color:var(--moss);color:#fff;}
+  .btn.quiet{flex:none;padding:9px 12px;}
+
+  footer{text-align:center;color:var(--ink-soft);font-size:12.5px;padding:8px 0 0;}
+
+  @media (max-width:420px){
+    h1{font-size:25px;}
+    .item-time{width:54px;font-size:12px;}
+    .b-cost{min-width:78px;font-size:13px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+
+  /* ================= 실시간 동기화용 추가 스타일 ================= */
+
+  /* 연결 표시 점 */
+  .dot{
+    display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--line);
+    margin-right:6px;vertical-align:0px;flex:none;
+  }
+  .dot.live{background:var(--moss);}
+  .dot.wait{background:var(--gold);}
+  .dot.off{background:var(--danger);}
+  .status-sub{
+    display:block;font-size:11.5px;color:var(--ink-soft);opacity:.85;
+    margin:-4px 0 7px;line-height:1.4;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .btn-row{flex-wrap:wrap;}
+  .btn{min-width:76px;}
+
+  /* 상대방이 방금 고친 곳 잠깐 강조 */
+  @keyframes flashIn{from{background:#FFF3CF;}to{background:transparent;}}
+  .flash{animation:flashIn 1.4s ease-out;}
+  @media (prefers-reduced-motion:reduce){.flash{animation:none;}}
+
+  /* 손가락으로 누르기 편하도록 (보이는 디자인은 그대로, 누를 수 있는 범위만 확대)
+     높이를 38px 로 잡은 건 한 줄 높이가 약 39px 이라서예요.
+     이보다 키우면 위아래 줄의 ✕ 버튼과 겹쳐 엉뚱한 항목이 지워질 수 있습니다. */
+  @media (pointer:coarse){
+    .del{position:relative;}
+    .del::after{content:"";position:absolute;left:50%;top:50%;
+      width:44px;height:38px;transform:translate(-50%,-50%);}
+    .box{position:relative;}
+    .box::after{content:"";position:absolute;left:50%;top:50%;
+      width:40px;height:38px;transform:translate(-50%,-50%);}
+    .add{padding:10px 14px;}
+    .btn{padding:12px 10px;}
+  }
+
+  /* ---------- 방 코드 화면 ---------- */
+  .gate{
+    position:fixed;inset:0;z-index:60;background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px 18px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;
+  }
+  .gate[hidden]{display:none;}
+  .gate-in{width:100%;max-width:420px;}
+  .gate h1{font-size:26px;margin:0 0 4px;}
+  .gate .kicker{margin-bottom:8px;}
+  .gate-card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 15px;margin-top:20px;
+  }
+  .gate label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;}
+  .gate input[type=text]{
+    width:100%;font-family:inherit;font-size:16px;padding:12px 12px;
+    border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);
+    letter-spacing:.04em;
+  }
+  .gate input[type=text]:focus{outline:none;border-color:var(--moss);box-shadow:0 0 0 2px var(--moss-dim);}
+  .gate .hint{font-size:12.5px;color:var(--ink-soft);margin:10px 0 0;line-height:1.6;}
+  .gate .hint b{color:var(--ink);}
+  .gate-btns{display:flex;gap:8px;margin-top:14px;}
+  .gate-btns .btn{padding:12px 10px;font-size:14px;}
+  .gate .warn{
+    font-size:12.5px;color:var(--danger);background:#F7E9E6;border-radius:8px;
+    padding:9px 12px;margin-top:12px;
+  }
+  .gate .warn[hidden]{display:none;}
+  .remember{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--ink-soft);}
+  .remember input{width:18px;height:18px;accent-color:var(--moss);}
+  .setup-note{
+    font-size:12.5px;color:var(--gold);background:var(--gold-dim);
+    border-radius:8px;padding:10px 12px;margin-top:14px;line-height:1.6;
+  }
+  .setup-note[hidden]{display:none;}
+</style>
+</head>
+<body>
+
+<!-- ================= 방 코드 화면 ================= -->
+<div class="gate" id="gate">
+  <div class="gate-in">
+    <p class="kicker">문민규 &amp; 윤소정</p>
+    <h1>발리 신혼여행</h1>
+    <p class="sub">두 사람이 같은 방 코드를 넣으면, 고친 내용이 서로에게 바로 보여요.</p>
+
+    <div class="setup-note" id="setupNote" hidden>
+      아직 Firebase 설정값이 들어있지 않아요. <code>index.html</code> 위쪽의
+      <b>FIREBASE_CONFIG</b> 부분을 콘솔에서 복사한 값으로 바꿔주세요.
+    </div>
+
+    <div class="gate-card">
+      <label for="roomInput">방 코드</label>
+      <input type="text" id="roomInput" inputmode="text" autocomplete="off"
+             autocapitalize="off" autocorrect="off" spellcheck="false"
+             placeholder="예: bali-7k4m-9qxt-3rvd">
+      <div class="remember">
+        <input type="checkbox" id="rememberChk" checked>
+        <label for="rememberChk" style="margin:0;font-weight:400;">이 기기에서 기억하기</label>
+      </div>
+      <div class="gate-btns">
+        <button class="btn primary" id="joinBtn">열기</button>
+        <button class="btn" id="newRoomBtn">새 방 만들기</button>
+        <button class="btn" id="copyLinkBtn">링크 복사</button>
+      </div>
+      <p class="warn" id="gateWarn" hidden></p>
+      <p class="hint">
+        방 코드가 곧 <b>비밀번호</b>예요. 처음이라면 <b>새 방 만들기</b>를 눌러 만들어진 코드를
+        배우자에게 한 번만 알려주세요. 짧거나 쉬운 코드는 남이 볼 수 있으니
+        만들어진 코드를 그대로 쓰는 걸 권해요.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 계획 본문 ================= -->
+<div class="wrap" id="app" hidden>
+
+  <header>
+    <p class="kicker">문민규 &amp; 윤소정</p>
+    <h1>발리 신혼여행</h1>
+    <p class="sub">2026년 9월 13일(일) — 9월 20일(일) · 6박 8일 · 우붓 3박 + 짐바란 3박</p>
+    <div class="meta-row">
+      <span class="chip dday" id="dday"><b>—</b></span>
+      <span class="chip">항공 <b>KE431 / KE434</b></span>
+      <span class="chip">예산 상한 <b>1,000만원</b></span>
+    </div>
+  </header>
+
+  <p class="edit-hint">글자를 눌러 바로 고칠 수 있어요. 항목 오른쪽 ✕로 지우고, <b>+ 추가</b>로 새로 넣으면 됩니다. 고친 내용은 <b>자동으로 저장되어 상대방 화면에도 바로</b> 나타나요. 지금 쓰고 있는 칸은 상대방 수정으로 지워지지 않습니다.</p>
+
+  <section>
+    <div class="sec-head"><h2>확정 예약</h2></div>
+    <div id="bookings"></div>
+    <button class="add block" data-add="booking">+ 예약 추가</button>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>하루하루 일정</h2></div>
+    <div id="days"></div>
+    <button class="add block" data-add="day">+ 날짜 추가</button>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>리조트에서 할 것</h2></div>
+    <p class="sec-note">투숙객 무료가 대부분이고, 돈 드는 건 따로 적어뒀어요.</p>
+    <div id="resorts"></div>
+    <button class="add block" data-add="resortGroup">+ 목록 추가</button>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>예산</h2></div>
+    <p class="sec-note">금액을 고치면 합계와 남는 돈이 바로 다시 계산돼요. "40~55만원"처럼 범위로 적어도 됩니다.</p>
+    <div class="card" style="padding:4px 14px 12px;">
+      <div id="budget"></div>
+      <button class="add" data-add="budget">+ 항목 추가</button>
+    </div>
+    <div class="total" id="total"></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>떠나기 전 준비</h2><span class="sec-note" id="chkCount" style="margin:0;"></span></div>
+    <div class="meter"><i id="chkMeter" style="width:0%"></i></div>
+    <div id="checklist"></div>
+    <button class="add block" data-add="chkGroup">+ 목록 추가</button>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>현지에서 알아둘 것</h2></div>
+    <div class="list-box gold" id="tips"></div>
+    <button class="add block" data-add="tip">+ 메모 추가</button>
+  </section>
+
+  <footer>행복한 첫 신혼여행 되세요 🌴</footer>
+</div>
+
+<div class="bar" id="bar" hidden>
+  <div class="bar-in">
+    <span class="status" id="status"><span class="dot"></span>연결하는 중…</span>
+    <span class="status-sub" id="statusSub"></span>
+    <div class="btn-row">
+      <button class="btn primary" id="backupBtn">내용 복사</button>
+      <button class="btn" id="importBtn">붙여넣기</button>
+      <button class="btn" id="reconnectBtn" hidden>다시 연결</button>
+      <button class="btn quiet" id="roomBtn">방 코드</button>
+      <button class="btn quiet" id="resetBtn">처음</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+/* ==========================================================================
+   1) Firebase 설정  —  콘솔에서 복사한 값을 이 블록에만 붙여넣으면 됩니다.
+      (이 값들은 원래 웹에 공개되는 값이라 비밀번호가 아닙니다.
+       실제 보안은 firestore.rules 의 보안 규칙이 담당합니다.)
+   ========================================================================== */
+const FIREBASE_CONFIG = {
+  apiKey:            "PASTE_API_KEY",
+  authDomain:        "PASTE_PROJECT_ID.firebaseapp.com",
+  projectId:         "PASTE_PROJECT_ID",
+  storageBucket:     "PASTE_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId:             "PASTE_APP_ID"
+};
+/* ====================== 여기까지만 바꾸면 됩니다 ====================== */
+
+import {
+  initializeApp, getAuth, signInAnonymously, onAuthStateChanged,
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  doc, onSnapshot, setDoc, serverTimestamp,
+  enableNetwork, disableNetwork,
+  connectAuthEmulator, connectFirestoreEmulator
+} from './vendor/firebase.js';
+
+/* ---------------- 기본 계획 ---------------- */
+function defaultState(){ return {
+  bookings:[
+    {t:'대한항공 직항 (왕복 2인)', s:'가는 편 KE431 · 9/13(일) 인천T2 16:10 → 덴파사르 22:10<br>오는 편 KE434 · 9/20(일) 덴파사르 01:10 → 인천 09:25', p:'약 250만원', done:true},
+    {t:'파드마 리조트 우붓 · 프리미어 클럽룸', s:'9/13~9/16 · 3박 · 89m 인피니티 풀, 클럽 라운지(조식·애프터눈 티·카나페·15% 식사할인)', p:'169만원', done:true},
+    {t:'AYANA Resort Bali · 오션 뷰 룸', s:'9/16~9/19 · 3박 · 인도양 전망, 조식·공항 차량 포함, 록 바 우선입장', p:'217만원', done:true},
+    {t:'아융강 래프팅 (클룩)', s:'9/15 오전 · 왕복 픽업·점심 포함 · 예약 아직 안 함', p:'2인 약 7~9만원', done:false}
+  ],
+  days:[
+    {d:'9/13 (일)', t:'출국 &amp; 우붓 도착', items:[
+      {time:'16:10', text:'인천공항(T2) 출발 — KE431 대한항공 직항'},
+      {time:'22:10', text:'덴파사르 도착 → 파드마 공항 픽업으로 리조트 직행 (유료 IDR 95만·현장결제, 1.5~2시간)'},
+      {time:'자정', text:'체크인 후 바로 취침 — 첫날은 무리하지 않기'}
+    ]},
+    {d:'9/14 (월)', t:'우붓 — 휴식 &amp; 중심가', items:[
+      {time:'오전', text:'클럽 라운지 조식 + 89m 인피니티 풀에서 여유'},
+      {time:'점심', text:'셔틀로 우붓 중심가 → 바비굴링 이부오까 (소진 시 마감, 현금 준비)'},
+      {time:'오후', text:'우붓 왕궁 + 아트마켓 구경 (중심가 도보권)'},
+      {time:'저녁', text:'(선택) 전통 레공·바롱 댄스 공연'}
+    ]},
+    {d:'9/15 (화)', t:'우붓 — 래프팅 &amp; 리조트 풀', items:[
+      {time:'오전', text:'아융강 화이트 래프팅 (클래스 II~III, 가이드 동승, 초급)'},
+      {time:'점심', text:'현지 와룽 로컬 식사 또는 리조트 복귀'},
+      {time:'오후', text:'89m 인피니티 풀에서 수영 · 클럽 라운지 애프터눈 티'},
+      {time:'저녁', text:'리조트 또는 우붓 로컬 레스토랑'}
+    ]},
+    {d:'9/16 (수)', t:'우붓 → 짐바란 이동', items:[
+      {time:'오전', text:'뜨갈랄랑 계단식 논 산책 (이른 시간이 한적)'},
+      {time:'오후', text:'교통 풀린 시간에 그랩으로 AYANA 이동 (1.5~2시간) · 체크인'},
+      {time:'저녁', text:'리조트에서 휴식'}
+    ]},
+    {d:'9/17 (목)', t:'AYANA — 웰니스 데이', items:[
+      {time:'오전', text:'요가 클래스 / 아쿠아토닉 해수 테라피 풀'},
+      {time:'오후', text:'쿠부 비치 카바나에서 여유'},
+      {time:'저녁', text:'짐바란 해변 씨푸드 BBQ'}
+    ]},
+    {d:'9/18 (금)', t:'AYANA — 휴식 &amp; 선셋', items:[
+      {time:'오전', text:'늦잠 + 룸서비스 조식, 풀에서 휴식'},
+      {time:'오후', text:'(선택) 울루와투 절벽 사원 + 케착 파이어 댄스 (차로 15~20분)'},
+      {time:'일몰', text:'락 바 절벽 선셋 — 예약 시간 15~20분 전 도착, 투숙객 우선 줄 이용'}
+    ]},
+    {d:'9/19 (토)', t:'체크아웃 &amp; 귀국', items:[
+      {time:'오전', text:'RIMBA 풀 카바나 일찍 선점 → RIMBA 토게에서 조식 (셔틀)'},
+      {time:'12:00', text:'체크아웃 후 짐 보관 · 카바나와 풀에서 오후까지'},
+      {time:'저녁', text:'가벼운 식사 · 마지막 선셋'},
+      {time:'21:00', text:'AYANA 차량으로 공항 (약 26분) → KE434 (9/20 01:10 출발)'}
+    ]}
+  ],
+  resorts:[
+    {tone:'', h:'파드마 우붓 · DAY 1~3', items:[
+      '89m 인피니티 풀 — 계곡과 대숲이 내려다보이는 시그니처 풀 (무료)',
+      'Bamboo Nest 아침 요가 — 밸리 뷰 정자, 레벨별 클래스 (무료)',
+      '애그로포레스트리 가든 산책 — 월·목 10~11시 가이드 투어 (무료)',
+      '3.4km 산책·조깅 트랙 — 대숲·강변·대나무 다리 (무료)',
+      '사이클링 빌리지 투어, 양궁 등 로테이션 액티비티 (무료)',
+      '24시간 피트니스 + 스팀·사우나 (무료)',
+      '바틱·우드카빙 워크숍 — 기념품 만들기 (유료)',
+      '스파 트리트먼트 — 클럽 혜택으로 10% 할인 (유료)'
+    ]},
+    {tone:'water', h:'AYANA · DAY 4~7', items:[
+      '록 바 — 절벽 선셋 명소. 투숙객은 푸니쿨라 우선 입장 (음료 유료)',
+      '아쿠아토닉 해수 테라피 풀 — 세계 최대급, 12개 하이드로 스테이션',
+      'Spa on the Rocks — 절벽 바위 위에서 파도 소리 들으며 마사지 (유료)',
+      'SAKA 뮤지엄 — 2024 TIME 선정, 발리 녜피 문화 전시',
+      'Tevana 가든 &amp; AYANA Farm — 6헥타르 정원 산책, 팜투바 체험',
+      '14개 수영장 — 메인 오션뷰 인피니티 풀, 오션 비치 풀, 자쿠지',
+      '쿠부 비치 — 한적한 프라이빗 비치와 카바나 (파도가 세 휴식용)',
+      '존 하디 바우처 IDR 200만 — 예약 특전, 주얼리·다이닝에 사용'
+    ]},
+    {tone:'gold', h:'현지 경험자 팁', items:[
+      '조식은 메인보다 RIMBA의 토게가 맛있다는 평 — 셔틀로 이동',
+      '인스타 명소 리버 풀은 빌라스 투숙객 전용 — 촬영 가능 시간은 컨시어지에 문의',
+      '리조트 식사가 비싸니 간식은 캐리어에 챙기고, 그랩 배달은 정문·로비에서 수령',
+      '록 바는 예약 필수, 음식이 비싸니 선셋 뷰 위주로 가볍게',
+      '마지막 날 RIMBA 카바나는 인기 — 오전 일찍 선점하고 짐은 리셉션에 보관'
+    ]}
+  ],
+  budget:[
+    {l:'항공권 (2인 왕복)', n:'대한항공 직항, 예약 완료', c:'약 250만원'},
+    {l:'우붓 파드마 3박', n:'프리미어 클럽룸, 조식 포함', c:'169만원'},
+    {l:'짐바란 AYANA 3박', n:'오션 뷰 룸, 조식·차량 포함', c:'217만원'},
+    {l:'래프팅 · 선택 활동', n:'울루와투, 케착 댄스 등', c:'40~55만원'},
+    {l:'식비', n:'로컬 + 씨푸드 중심 (조식은 숙소 포함)', c:'40~60만원'},
+    {l:'공항 픽업 · 현지 교통', n:'파드마 픽업 8.5만원 + 그랩', c:'12~18만원'},
+    {l:'비자 · 보험 · 유심', n:'e-VOA, 여행자보험 가입 완료', c:'30~40만원'},
+    {l:'예비비', n:'여유 버퍼', c:'약 100만원'}
+  ],
+  cap:1000,
+  checklist:[
+    {h:'서류 &amp; 비자', items:[
+      {t:'여권 유효기간 확인 (입국일 기준 6개월 이상)', d:false},
+      {t:'e-VOA 사전 신청 — molina.imigrasi.go.id (1인 약 4.5만원)', d:false},
+      {t:'파드마 공항 픽업 수락 회신 (도착 3일 전까지)', d:false}
+    ]},
+    {h:'보험 &amp; 건강', items:[
+      {t:'여행자 보험 가입', d:true},
+      {t:'A형간염 · 장티푸스 백신 (출발 2주 전)', d:false},
+      {t:'DEET 모기 기피제 (뎅기열 주의)', d:false},
+      {t:'상비약 — 지사제, 소화제, 두통약, 멀미약', d:false}
+    ]},
+    {h:'결제 &amp; 환전', items:[
+      {t:'트래블카드 발급·충전 (AYANA 전 구역 비현금)', d:false},
+      {t:'카드 한도 확인 — 파드마 잔금, AYANA 보증금 사전승인', d:false},
+      {t:'비상용 현금 소액 (우붓 로컬 식당용)', d:false}
+    ]},
+    {h:'통신 &amp; 앱', items:[
+      {t:'발리 유심 또는 eSIM', d:false},
+      {t:'WhatsApp 설치 (현지 기사·리조트 연락)', d:false},
+      {t:'Grab 앱 + 구글맵 오프라인 지도', d:false}
+    ]},
+    {h:'짐 챙기기', items:[
+      {t:'멀티 어댑터 (인도네시아 C/F 타입)', d:false},
+      {t:'자외선 차단제 SPF 50+', d:false},
+      {t:'래프팅용 여벌 옷, 방수 샌들, 방수 파우치', d:false},
+      {t:'수영복 여러 벌 (풀 이용이 많음)', d:false},
+      {t:'인천공항 교통 — 전기차 주차 예약 또는 버스', d:false}
+    ]}
+  ],
+  tips:[
+    '단거리는 그랩, 장거리·투어는 기사 포함 차량 대절 (하루 5~7만원)',
+    '출퇴근 피크 시간에는 장거리 이동 금지 — 우붓↔짐바란은 낮 시간대로',
+    '우붓 중심가는 반나절이면 충분. 이부오까는 현금 준비',
+    'AYANA 쿠부 비치는 파도가 세서 수영은 풀에서, 해변은 산책·휴식용',
+    '락 바는 음료보다 절벽 선셋이 핵심 — 무알콜 음료로 충분',
+    '가방 등 면세 쇼핑은 1인 800달러 초과분에 관세 — 자진신고 시 30% 감면'
+  ]
+};}
+
+/* ---------------- 유틸 ---------------- */
+let state = defaultState();
+const $ = id => document.getElementById(id);
+// 편집 내용은 innerHTML을 그대로 쓰되, 위험 태그만 제거
+const clean = s => String(s).replace(/<(script|style|iframe|object|embed|link|meta)[^>]*>[\s\S]*?<\/\1>/gi,'')
+                            .replace(/<(script|style|iframe|object|embed|link|meta)[^>]*>/gi,'')
+                            .replace(/ on\w+="[^"]*"/gi,'').replace(/ on\w+='[^']*'/gi,'');
+const stamp = d => (d || new Date()).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+
+/* ---------------- 렌더 ---------------- */
+function ed(html, path){
+  return '<span contenteditable="true" data-path="' + path + '">' + html + '</span>';
+}
+function delBtn(action, path){
+  return '<button class="del" data-del="' + action + '" data-path="' + path + '" aria-label="삭제">&times;</button>';
+}
+
+function renderBookings(){
+  $('bookings').innerHTML = state.bookings.map((b,i) =>
+    '<div class="card"><div style="display:flex;gap:8px;align-items:flex-start;">' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="card-title">' + ed(clean(b.t), 'bookings.'+i+'.t') +
+          '<span class="tag' + (b.done ? '' : ' pend') + '">' + (b.done ? '예약 완료' : '예약 전') + '</span></div>' +
+        '<div class="card-sub">' + ed(clean(b.s), 'bookings.'+i+'.s') + '</div>' +
+        '<div class="card-sub" style="margin-top:3px;color:var(--water);font-weight:700;">' + ed(clean(b.p), 'bookings.'+i+'.p') + '</div>' +
+      '</div>' + delBtn('bookings', i) +
+    '</div></div>'
+  ).join('');
+}
+
+function renderDays(){
+  $('days').innerHTML = state.days.map((d,i) =>
+    '<div class="day">' +
+      '<div class="day-head">' +
+        '<span class="day-n">DAY ' + (i+1) + '</span>' +
+        '<span class="day-date">' + ed(clean(d.d), 'days.'+i+'.d') + '</span>' +
+        '<span class="day-title">' + ed(clean(d.t), 'days.'+i+'.t') + '</span>' +
+        '<button class="del" data-del="days" data-path="' + i + '" aria-label="날짜 삭제" style="color:rgba(255,255,255,.7);">&times;</button>' +
+      '</div>' +
+      '<div class="day-body">' +
+        d.items.map((it,j) =>
+          '<div class="item">' +
+            '<span class="item-time">' + ed(clean(it.time), 'days.'+i+'.items.'+j+'.time') + '</span>' +
+            '<span class="item-text">' + ed(clean(it.text), 'days.'+i+'.items.'+j+'.text') + '</span>' +
+            delBtn('dayItem', i+'.'+j) +
+          '</div>'
+        ).join('') +
+        '<button class="add" data-add="dayItem" data-path="' + i + '">+ 일정 추가</button>' +
+      '</div>' +
+    '</div>'
+  ).join('');
+}
+
+function renderResorts(){
+  $('resorts').innerHTML = state.resorts.map((g,i) =>
+    '<div class="list-box ' + (g.tone || '') + '">' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+        '<h3 style="flex:1;">' + ed(clean(g.h), 'resorts.'+i+'.h') + '</h3>' +
+        delBtn('resortGroup', i) +
+      '</div>' +
+      g.items.map((t,j) =>
+        '<div class="li"><span class="li-dot"></span>' +
+          '<span class="li-text">' + ed(clean(t), 'resorts.'+i+'.items.'+j) + '</span>' +
+          delBtn('resortItem', i+'.'+j) +
+        '</div>'
+      ).join('') +
+      '<button class="add" data-add="resortItem" data-path="' + i + '">+ 항목 추가</button>' +
+    '</div>'
+  ).join('');
+}
+
+/* 금액 문자열에서 최소·최대(만원) 뽑기 */
+function parseCost(s){
+  const nums = String(s).replace(/,/g,'').match(/\d+(\.\d+)?/g);
+  if(!nums || !nums.length) return [0,0];
+  const v = nums.map(Number);
+  return [Math.min.apply(null,v), Math.max.apply(null,v)];
+}
+
+function renderBudget(){
+  $('budget').innerHTML = state.budget.map((b,i) =>
+    '<div class="brow">' +
+      '<span class="b-label">' + ed(clean(b.l), 'budget.'+i+'.l') +
+        '<span class="b-note">' + ed(clean(b.n), 'budget.'+i+'.n') + '</span></span>' +
+      '<span class="b-cost">' + ed(clean(b.c), 'budget.'+i+'.c') + '</span>' +
+      delBtn('budget', i) +
+    '</div>'
+  ).join('');
+
+  let lo = 0, hi = 0;
+  state.budget.forEach(b => { const r = parseCost(b.c); lo += r[0]; hi += r[1]; });
+  const cap = state.cap || 1000;
+  const fmt = n => Math.round(n).toLocaleString('ko-KR');
+  const range = (lo === hi) ? fmt(lo) + '만원' : fmt(lo) + '~' + fmt(hi) + '만원';
+  const leftLo = cap - hi, leftHi = cap - lo;
+  const leftTxt = (leftLo === leftHi) ? fmt(leftLo) + '만원' : fmt(leftLo) + '~' + fmt(leftHi) + '만원';
+  const pct = Math.max(0, Math.min(100, (hi / cap) * 100));
+  const over = hi > cap;
+
+  $('total').innerHTML =
+    '<div class="total-row"><span class="total-k">예상 합계</span><span class="total-v">' + range + '</span></div>' +
+    '<div class="total-row"><span class="total-k">' + (over ? '한도 초과' : '남는 예산') + '</span>' +
+      '<span class="total-v small" style="' + (over ? 'color:#FFB4A6;' : 'color:#7FC8A0;') + '">' +
+      (over ? fmt(hi - cap) + '만원 초과' : leftTxt) + '</span></div>' +
+    '<div class="cap-meter"><i style="width:' + pct + '%;' + (over ? 'background:#FFB4A6;' : '') + '"></i></div>' +
+    '<div class="total-k" style="margin-top:8px;font-size:12px;">상한 ' + fmt(cap) + '만원 기준 · 최대 지출로 계산</div>';
+}
+
+function renderChecklist(){
+  $('checklist').innerHTML = state.checklist.map((g,i) =>
+    '<div class="list-box">' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+        '<h3 style="flex:1;">' + ed(clean(g.h), 'checklist.'+i+'.h') + '</h3>' +
+        delBtn('chkGroup', i) +
+      '</div>' +
+      g.items.map((it,j) =>
+        '<div class="chk" data-done="' + (it.d ? 'true' : 'false') + '">' +
+          '<button class="box" role="checkbox" aria-checked="' + (it.d ? 'true' : 'false') + '" data-toggle="' + i + '.' + j + '">' + (it.d ? '✓' : '') + '</button>' +
+          '<span class="chk-text">' + ed(clean(it.t), 'checklist.'+i+'.items.'+j+'.t') + '</span>' +
+          delBtn('chkItem', i+'.'+j) +
+        '</div>'
+      ).join('') +
+      '<button class="add" data-add="chkItem" data-path="' + i + '">+ 할 일 추가</button>' +
+    '</div>'
+  ).join('');
+
+  let done = 0, all = 0;
+  state.checklist.forEach(g => g.items.forEach(it => { all++; if(it.d) done++; }));
+  $('chkCount').textContent = all ? done + ' / ' + all + ' 완료' : '';
+  $('chkMeter').style.width = all ? (done / all * 100) + '%' : '0%';
+}
+
+function renderTips(){
+  $('tips').innerHTML = state.tips.map((t,i) =>
+    '<div class="li"><span class="li-dot"></span>' +
+      '<span class="li-text">' + ed(clean(t), 'tips.'+i) + '</span>' +
+      delBtn('tips', i) +
+    '</div>'
+  ).join('');
+}
+
+function renderDday(){
+  const dep = new Date(2026, 8, 13);
+  const now = new Date();
+  const diff = Math.ceil((dep - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+  const el = $('dday');
+  if(diff > 0) el.innerHTML = '출발까지 <b>D-' + diff + '</b>';
+  else if(diff === 0) el.innerHTML = '<b>오늘 출발</b>';
+  else if(diff >= -7) el.innerHTML = '<b>여행 중</b>';
+  else el.innerHTML = '<b>다녀왔어요</b>';
+}
+
+function renderAll(){
+  renderDday(); renderBookings(); renderDays(); renderResorts();
+  renderBudget(); renderChecklist(); renderTips();
+}
+
+/* ==========================================================================
+   실시간 동기화
+   ========================================================================== */
+const FIELDS = ['bookings','days','resorts','budget','checklist','tips','cap'];
+const RENDER = {
+  bookings:renderBookings, days:renderDays, resorts:renderResorts,
+  budget:renderBudget, checklist:renderChecklist, tips:renderTips, cap:renderBudget
+};
+const SECTION_EL = {
+  bookings:'bookings', days:'days', resorts:'resorts',
+  budget:'budget', checklist:'checklist', tips:'tips', cap:'total'
+};
+
+const EMU = new URLSearchParams(location.search).get('emu') === '1';
+let app=null, auth=null, db=null, uid=null, docRef=null, unsub=null;
+let roomCode = null, seeded = false;
+let online = false, pendingWrites = false, lastUpdated = null, lastBy = null;
+const dirty = new Set();
+let flushTimer = null, noticeTimer = null;
+
+const configReady = () => !!FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf('PASTE_') !== 0;
+
+/* ---- 값 인코딩: 계획 전체를 한 문서 안에 항목별 JSON 으로 ---- */
+function encode(f){ return f === 'cap' ? Number(state.cap) || 0 : JSON.stringify(state[f]); }
+function decode(f, raw){
+  if(f === 'cap'){ const n = Number(raw); return Number.isFinite(n) && n > 0 ? n : undefined; }
+  if(typeof raw !== 'string') return undefined;
+  try{ const v = JSON.parse(raw); return Array.isArray(v) ? v : undefined; }
+  catch(e){ return undefined; }
+}
+
+/* ---- 이 기기 백업 (통신이 완전히 끊겼을 때의 마지막 안전망) ---- */
+const mirrorKey = () => 'bali-plan:' + roomCode;
+function writeMirror(){ try{ if(roomCode) localStorage.setItem(mirrorKey(), JSON.stringify(state)); }catch(e){} }
+function readMirror(){ try{ const s = localStorage.getItem(mirrorKey()); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
+
+/* ---- 상태 표시 ---- */
+function setStatus(msg, kind, dot){
+  $('status').className = 'status' + (kind ? ' ' + kind : '');
+  $('status').innerHTML = '<span class="dot ' + (dot || '') + '"></span>' + msg;
+}
+function updateStatus(){
+  const busy = pendingWrites || dirty.size > 0;
+  if(!online) setStatus('연결 끊김 — 다시 연결 중', 'err', 'off');
+  else if(busy) setStatus('저장 중…', '', 'wait');
+  else setStatus('연결됨 · 자동 저장', 'ok', 'live');
+
+  if(noticeTimer) return;
+  let sub = lastUpdated
+    ? '마지막 수정 ' + stamp(lastUpdated) + (lastBy ? (lastBy === uid ? ' · 내가' : ' · 상대방이') : '')
+    : '아직 수정 없음';
+  if(roomCode) sub += ' · 방 ' + roomCode;
+  $('statusSub').textContent = sub;
+  $('reconnectBtn').hidden = online;
+}
+function flashNotice(msg){
+  clearTimeout(noticeTimer);
+  $('statusSub').textContent = msg;
+  noticeTimer = setTimeout(() => { noticeTimer = null; updateStatus(); }, 4000);
+}
+
+/* ---- 쓰기: 바뀐 항목만 골라 보내므로 서로 다른 곳을 고치면 둘 다 살아남음 ---- */
+function markDirty(){
+  for(const f of arguments) dirty.add(f);
+  writeMirror();
+  updateStatus();
+  clearTimeout(flushTimer);
+  flushTimer = setTimeout(flush, 250);
+}
+function flush(){
+  if(!docRef || !dirty.size) return;
+  const fields = Array.from(dirty);
+  dirty.clear();
+  const payload = { updatedAt: serverTimestamp(), updatedBy: uid };
+  for(const f of fields) payload[f] = encode(f);
+  // 오프라인이면 Firestore 가 로컬에 쌓아뒀다가 연결되면 알아서 보냅니다.
+  setDoc(docRef, payload, { merge:true }).catch(err => {
+    fields.forEach(f => dirty.add(f));
+    if(err && err.code === 'permission-denied')
+      setStatus('저장 거부됨 — Firestore 보안 규칙을 확인해 주세요', 'err', 'off');
+    else
+      setStatus('저장 실패 — ' + (err && err.message ? err.message : '알 수 없는 오류'), 'err', 'off');
+  });
+  updateStatus();
+}
+
+/* ---- 편집 중인 칸 보호: 커서 위치까지 되살림 ---- */
+function caretOffset(el){
+  const sel = window.getSelection();
+  if(!sel || !sel.rangeCount) return null;
+  const r = sel.getRangeAt(0);
+  if(!el.contains(r.endContainer)) return null;
+  const pre = document.createRange();
+  pre.selectNodeContents(el);
+  pre.setEnd(r.endContainer, r.endOffset);
+  return pre.toString().length;
+}
+function setCaret(el, offset){
+  if(offset == null) return;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  let n, acc = 0, node = null, off = 0;
+  while((n = walker.nextNode())){
+    const len = n.nodeValue.length;
+    if(acc + len >= offset){ node = n; off = offset - acc; break; }
+    acc += len;
+  }
+  const r = document.createRange();
+  if(node) r.setStart(node, Math.min(off, node.nodeValue.length));
+  else { r.selectNodeContents(el); r.collapse(false); }
+  r.collapse(true);
+  const sel = window.getSelection();
+  sel.removeAllRanges(); sel.addRange(r);
+}
+function captureFocus(){
+  const el = document.activeElement;
+  if(!el || !el.matches || !el.matches('[contenteditable][data-path]')) return null;
+  return { path: el.dataset.path, html: el.innerHTML, caret: caretOffset(el) };
+}
+function restoreFocus(focus, changed){
+  if(changed.indexOf(focus.path.split('.')[0]) === -1) return;  // 내 칸은 안 건드려졌음
+  const el = document.querySelector('[contenteditable][data-path="' + focus.path + '"]');
+  if(!el){ flashNotice('상대방이 방금 그 항목을 지웠어요'); return; }
+  el.innerHTML = focus.html;              // 쓰던 내용 그대로 유지
+  el.focus({ preventScroll:true });
+  setCaret(el, focus.caret);
+}
+
+/* ---- 상대방 수정 반영 ---- */
+function applyRemote(data){
+  const focus = captureFocus();
+  const changed = [];
+  for(const f of FIELDS){
+    if(dirty.has(f)) continue;                      // 아직 안 보낸 내 수정이 우선
+    if(!(f in data)) continue;
+    const v = decode(f, data[f]);
+    if(v === undefined) continue;
+    if(JSON.stringify(state[f]) === JSON.stringify(v)) continue;
+    state[f] = v;
+    changed.push(f);
+  }
+  if(!changed.length) return;
+
+  const done = new Set();
+  for(const f of changed){
+    const fn = RENDER[f];
+    if(!done.has(fn)){ done.add(fn); fn(); }
+    const el = $(SECTION_EL[f]);
+    if(el){ el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+  }
+  writeMirror();
+  if(focus) restoreFocus(focus, changed);
+}
+
+function onSnap(snap){
+  online = !snap.metadata.fromCache;
+  pendingWrites = snap.metadata.hasPendingWrites;
+
+  if(!snap.exists()){
+    // 캐시에만 없는 것일 수도 있으니, 서버가 "없다"고 확인해 준 뒤에만 새로 만듭니다.
+    if(online && !seeded){ seeded = true; seedRoom(); }
+    updateStatus();
+    return;
+  }
+  seeded = true;
+  const data = snap.data();
+  const ts = data.updatedAt && data.updatedAt.toDate ? data.updatedAt.toDate() : null;
+  if(ts) lastUpdated = ts;
+  if(data.updatedBy) lastBy = data.updatedBy;
+  applyRemote(data);
+  updateStatus();
+}
+
+function onSnapError(err){
+  online = false;
+  if(err && err.code === 'permission-denied'){
+    setStatus('이 방을 열 권한이 없어요 — 보안 규칙과 방 코드를 확인해 주세요', 'err', 'off');
+  }else if(err && err.code === 'unavailable'){
+    setStatus('연결 끊김 — 다시 연결 중', 'err', 'off');
+  }else{
+    setStatus('연결 오류 — ' + (err && err.message ? err.message : ''), 'err', 'off');
+  }
+  $('reconnectBtn').hidden = false;
+}
+
+function seedRoom(){
+  const backup = readMirror();
+  if(backup && typeof backup === 'object' && Array.isArray(backup.days)){
+    if(confirm('이 방은 아직 비어 있어요.\n이 기기에 저장해 둔 이전 내용을 불러올까요?\n(취소하면 처음 계획으로 시작합니다)')){
+      state = Object.assign(defaultState(), backup);
+      renderAll();
+    }
+  }
+  markDirty.apply(null, FIELDS);
+}
+
+/* ---- 접속 ---- */
+function initFirebase(){
+  if(app) return;
+  app  = initializeApp(FIREBASE_CONFIG);
+  auth = getAuth(app);
+  db   = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+  if(EMU){
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings:true });
+    connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  }
+}
+
+async function connect(code){
+  roomCode = code;
+  initFirebase();
+  setStatus('연결하는 중…', '', 'wait');
+  try{
+    if(!auth.currentUser) await signInAnonymously(auth);
+  }catch(e){
+    const c = e && e.code || '';
+    if(c === 'auth/operation-not-allowed')
+      setStatus('Firebase 콘솔 → Authentication → 로그인 방법에서 “익명”을 켜주세요', 'err', 'off');
+    else if(c.indexOf('api-key') !== -1 || c === 'auth/invalid-api-key')
+      setStatus('Firebase 설정값(apiKey)이 올바르지 않아요', 'err', 'off');
+    else if(c === 'auth/network-request-failed')
+      setStatus('연결 끊김 — 다시 연결 중', 'err', 'off');
+    else
+      setStatus('로그인 실패 — ' + (e && e.message ? e.message : ''), 'err', 'off');
+    return;
+  }
+  uid = auth.currentUser.uid;
+  docRef = doc(db, 'rooms', roomCode);
+  if(unsub) unsub();
+  seeded = false;
+  unsub = onSnapshot(docRef, { includeMetadataChanges:true }, onSnap, onSnapError);
+}
+
+/* ---------------- 편집 ---------------- */
+function getByPath(path){
+  const parts = path.split('.');
+  let o = state;
+  for(const k of parts){
+    if(o == null) return undefined;
+    o = Array.isArray(o) ? o[Number(k)] : o[k];
+  }
+  return o;
+}
+function setByPath(path, value){
+  const parts = path.split('.');
+  let o = state;
+  for(let i = 0; i < parts.length - 1; i++){
+    const k = parts[i];
+    o = Array.isArray(o) ? o[Number(k)] : o[k];
+    if(o == null) return;
+  }
+  const last = parts[parts.length - 1];
+  if(Array.isArray(o)) o[Number(last)] = value; else o[last] = value;
+}
+
+document.addEventListener('focusout', e => {
+  const el = e.target.closest && e.target.closest('[contenteditable][data-path]');
+  if(!el) return;
+  const path = el.dataset.path;
+  const now = clean(el.innerHTML.trim());
+  if(getByPath(path) === now) return;      // 안 바뀌었으면 저장 생략
+  setByPath(path, now);
+  const f = path.split('.')[0];
+  markDirty(f);
+  if(f === 'budget') renderBudget();       // 예산은 합계가 바뀌므로 즉시 갱신
+});
+
+// 편집 중 Enter는 줄바꿈 대신 편집 종료
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && e.target.closest('[contenteditable]')){
+    e.preventDefault();
+    e.target.blur();
+  }
+});
+
+/* ---------------- 클릭 처리 ---------------- */
+document.addEventListener('click', e => {
+  const tog = e.target.closest('[data-toggle]');
+  if(tog){
+    const p = tog.dataset.toggle.split('.');
+    const it = state.checklist[+p[0]].items[+p[1]];
+    it.d = !it.d;
+    renderChecklist(); markDirty('checklist');
+    return;
+  }
+
+  const del = e.target.closest('[data-del]');
+  if(del){
+    const kind = del.dataset.del, p = del.dataset.path.split('.');
+    if(!confirm('이 항목을 지울까요?')) return;
+    let f = null;
+    if(kind === 'bookings'){ state.bookings.splice(+p[0],1); f='bookings'; }
+    else if(kind === 'days'){ state.days.splice(+p[0],1); f='days'; }
+    else if(kind === 'dayItem'){ state.days[+p[0]].items.splice(+p[1],1); f='days'; }
+    else if(kind === 'resortGroup'){ state.resorts.splice(+p[0],1); f='resorts'; }
+    else if(kind === 'resortItem'){ state.resorts[+p[0]].items.splice(+p[1],1); f='resorts'; }
+    else if(kind === 'budget'){ state.budget.splice(+p[0],1); f='budget'; }
+    else if(kind === 'chkGroup'){ state.checklist.splice(+p[0],1); f='checklist'; }
+    else if(kind === 'chkItem'){ state.checklist[+p[0]].items.splice(+p[1],1); f='checklist'; }
+    else if(kind === 'tips'){ state.tips.splice(+p[0],1); f='tips'; }
+    if(f){ RENDER[f](); markDirty(f); }
+    return;
+  }
+
+  const add = e.target.closest('[data-add]');
+  if(add){
+    const kind = add.dataset.add, p = add.dataset.path;
+    let f = null;
+    if(kind === 'booking'){ state.bookings.push({t:'새 예약', s:'내용을 적어주세요', p:'금액', done:false}); f='bookings'; }
+    else if(kind === 'day'){ state.days.push({d:'날짜', t:'제목', items:[{time:'시간', text:'무엇을 할까요'}]}); f='days'; }
+    else if(kind === 'dayItem'){ state.days[+p].items.push({time:'시간', text:'무엇을 할까요'}); f='days'; }
+    else if(kind === 'resortGroup'){ state.resorts.push({tone:'', h:'새 목록', items:['내용을 적어주세요']}); f='resorts'; }
+    else if(kind === 'resortItem'){ state.resorts[+p].items.push('내용을 적어주세요'); f='resorts'; }
+    else if(kind === 'budget'){ state.budget.push({l:'새 항목', n:'메모', c:'0만원'}); f='budget'; }
+    else if(kind === 'chkGroup'){ state.checklist.push({h:'새 목록', items:[{t:'할 일', d:false}]}); f='checklist'; }
+    else if(kind === 'chkItem'){ state.checklist[+p].items.push({t:'할 일', d:false}); f='checklist'; }
+    else if(kind === 'tip'){ state.tips.push('메모를 적어주세요'); f='tips'; }
+    if(f){ RENDER[f](); markDirty(f); }
+    return;
+  }
+});
+
+/* ---------------- 아래 버튼들 ---------------- */
+$('reconnectBtn').addEventListener('click', async () => {
+  if(!db) return;
+  try{
+    await disableNetwork(db);
+    await enableNetwork(db);
+    flashNotice('다시 연결하고 있어요…');
+  }catch(e){ /* 무시 */ }
+});
+
+$('backupBtn').addEventListener('click', async () => {
+  const json = JSON.stringify(state);
+  try{
+    await navigator.clipboard.writeText(json);
+    flashNotice('복사했어요 · 카톡이나 메모장에 붙여넣어 두세요');
+  }catch(e){
+    window.prompt('아래 내용을 길게 눌러 전체 복사하세요', json);
+  }
+});
+
+$('importBtn').addEventListener('click', () => {
+  const text = window.prompt('복사해 둔 계획 내용을 붙여넣으세요');
+  if(text == null) return;
+  const trimmed = String(text).trim();
+  if(!trimmed){ flashNotice('붙여넣은 내용이 없어요'); return; }
+  let parsed;
+  try{ parsed = JSON.parse(trimmed); }
+  catch(e){ flashNotice('내용을 읽지 못했어요 · 복사한 전체를 붙여넣어 주세요'); return; }
+  if(!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.days)){
+    flashNotice('이 계획의 내용이 아니에요 · 다시 확인해 주세요'); return;
+  }
+  if(!confirm('지금 화면의 내용이 붙여넣은 것으로 바뀝니다.\n상대방 화면에도 똑같이 반영돼요. 계속할까요?')) return;
+  state = Object.assign(defaultState(), parsed);
+  renderAll();
+  markDirty.apply(null, FIELDS);
+});
+
+$('resetBtn').addEventListener('click', () => {
+  if(!confirm('지금까지 고친 내용이 모두 사라지고 처음 계획으로 돌아갑니다.\n상대방 화면에도 똑같이 반영돼요. 계속할까요?')) return;
+  state = defaultState();
+  renderAll();
+  markDirty.apply(null, FIELDS);
+});
+
+$('roomBtn').addEventListener('click', () => {
+  $('roomInput').value = roomCode || '';
+  $('gateWarn').hidden = true;
+  $('gate').hidden = false;
+});
+
+/* ---------------- 방 코드 화면 ---------------- */
+const ALPHA = '23456789abcdefghjkmnpqrstuvwxyz';   // 헷갈리는 0,1,i,l,o 제외
+function genCode(){
+  const b = new Uint32Array(12);
+  crypto.getRandomValues(b);
+  let s = '';
+  for(let i = 0; i < 12; i++){
+    s += ALPHA[b[i] % ALPHA.length];
+    if(i % 4 === 3 && i < 11) s += '-';
+  }
+  return 'bali-' + s;
+}
+const normalizeCode = s => String(s || '').trim().toLowerCase()
+  .replace(/[^a-z0-9-]+/g, '-').replace(/-{2,}/g, '-').replace(/^-|-$/g, '');
+const validCode = c => c.length >= 12 && c.length <= 64;
+
+function warn(msg){ $('gateWarn').textContent = msg; $('gateWarn').hidden = false; }
+
+/* 아래 고정 바가 본문 마지막 줄을 가리지 않도록 높이를 재서 여백을 맞춥니다. */
+function fitBar(){
+  const bar = $('bar');
+  if(bar.hidden) return;
+  document.querySelector('.wrap').style.paddingBottom = (bar.offsetHeight + 18) + 'px';
+}
+if(window.ResizeObserver) new ResizeObserver(fitBar).observe($('bar'));
+window.addEventListener('resize', fitBar);
+
+function enterRoom(code){
+  $('gate').hidden = true;
+  $('app').hidden = false;
+  $('bar').hidden = false;
+  fitBar();
+  if(location.hash) history.replaceState(null, '', location.pathname + location.search);
+  connect(code);
+}
+
+$('newRoomBtn').addEventListener('click', () => {
+  $('roomInput').value = genCode();
+  $('gateWarn').hidden = true;
+  $('roomInput').focus();
+});
+
+$('copyLinkBtn').addEventListener('click', async () => {
+  const code = normalizeCode($('roomInput').value);
+  if(!validCode(code)){ warn('먼저 방 코드를 만들거나 입력해 주세요.'); return; }
+  const link = location.origin + location.pathname + '#/r/' + code;
+  try{
+    await navigator.clipboard.writeText(link);
+    warn('링크를 복사했어요. 배우자에게 한 번만 보내주세요.');
+    $('gateWarn').style.color = '';
+  }catch(e){
+    window.prompt('아래 링크를 길게 눌러 복사하세요', link);
+  }
+});
+
+$('joinBtn').addEventListener('click', () => {
+  if(!configReady()){ warn('Firebase 설정값을 먼저 넣어주세요.'); return; }
+  const code = normalizeCode($('roomInput').value);
+  if(!validCode(code)){
+    warn('방 코드는 영문 소문자·숫자·하이픈으로 12자 이상이어야 해요. “새 방 만들기”를 눌러보세요.');
+    return;
+  }
+  $('roomInput').value = code;
+  try{
+    if($('rememberChk').checked) localStorage.setItem('bali-room', code);
+    else localStorage.removeItem('bali-room');
+  }catch(e){}
+  enterRoom(code);
+});
+
+$('roomInput').addEventListener('keydown', e => { if(e.key === 'Enter') $('joinBtn').click(); });
+
+window.addEventListener('offline', () => { online = false; updateStatus(); });
+
+/* ---------------- 시작 ---------------- */
+renderAll();                                   // 연결 전에도 계획이 바로 보이게
+if(!configReady()) $('setupNote').hidden = false;
+
+const hashCode = (location.hash.match(/^#\/r\/(.+)$/) || [])[1];
+let preset = '';
+try{ preset = normalizeCode(hashCode || localStorage.getItem('bali-room') || ''); }catch(e){}
+$('roomInput').value = preset;
+if(preset && validCode(preset) && configReady()) enterRoom(preset);
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+rules_version = '2';
+
+// 발리 신혼여행 계획 — Firestore 보안 규칙
+//
+// 생각의 뼈대
+//   1) 로그인하지 않은 사람은 아무것도 못 합니다. (익명 로그인이라도 로그인은 해야 함)
+//   2) 방 코드가 곧 비밀번호입니다. 그래서 12자 미만의 짧은 코드는 아예 못 만들게 막습니다.
+//      (앱의 "새 방 만들기"가 만드는 코드는 19자, 조합이 약 10^18 가지라 찍어 맞히기 어렵습니다)
+//   3) 이 앱이 쓰는 모양의 문서만 허용합니다. 엉뚱한 필드나 거대한 데이터는 거부합니다.
+//   4) rooms 말고 다른 경로는 전부 막습니다. 삭제도 막아서 사고로 날아가지 않게 합니다.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /rooms/{roomId} {
+
+      function signedIn() {
+        return request.auth != null;
+      }
+
+      function goodRoomId() {
+        return roomId.size() >= 12
+            && roomId.size() <= 64
+            && roomId.matches('^[a-z0-9][a-z0-9-]*[a-z0-9]$');
+      }
+
+      function jsonOk(v) {
+        return v is string && v.size() <= 200000;
+      }
+
+      function validDoc() {
+        let d = request.resource.data;
+        return d.keys().hasOnly(
+                 ['bookings','days','resorts','budget','checklist','tips','cap','updatedAt','updatedBy'])
+            && (!('bookings'  in d) || jsonOk(d.bookings))
+            && (!('days'      in d) || jsonOk(d.days))
+            && (!('resorts'   in d) || jsonOk(d.resorts))
+            && (!('budget'    in d) || jsonOk(d.budget))
+            && (!('checklist' in d) || jsonOk(d.checklist))
+            && (!('tips'      in d) || jsonOk(d.tips))
+            && (!('cap'       in d) || (d.cap is number && d.cap >= 0 && d.cap <= 100000000))
+            && (!('updatedBy' in d) || d.updatedBy == request.auth.uid);
+      }
+
+      allow read:           if signedIn() && goodRoomId();
+      allow create, update: if signedIn() && goodRoomId() && validDoc();
+      allow delete:         if false;
+    }
+
+    // 그 밖의 모든 경로는 차단
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
