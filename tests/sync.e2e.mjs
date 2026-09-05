@@ -259,7 +259,7 @@ try{
         one('#tips .del', '✕ 삭제 버튼'),
         one('.box', '체크박스'),
         one('.add', '+ 추가 버튼'),
-        one('#backupBtn', '아래쪽 버튼')
+        one('#roomBtn', '아래쪽 버튼')
       ],
       overlap: Math.round(overlap * 10) / 10,
       bodyFont: Math.round(parseFloat(getComputedStyle(document.body).fontSize)),
