@@ -394,7 +394,6 @@
       <button class="btn" id="reconnectBtn" hidden>다시 연결</button>
       <button class="btn" id="orderBtn">↕ 순서</button>
       <button class="btn" id="roomBtn">방 코드</button>
-      <button class="btn quiet" id="resetBtn">처음</button>
     </div>
   </div>
 </div>
@@ -1097,13 +1096,6 @@ $('reconnectBtn').addEventListener('click', async () => {
     await enableNetwork(db);
     flashNotice('다시 연결하고 있어요…');
   }catch(e){ /* 무시 */ }
-});
-
-$('resetBtn').addEventListener('click', () => {
-  if(!confirm('지금까지 고친 내용이 모두 사라지고 처음 계획으로 돌아갑니다.\n상대방 화면에도 똑같이 반영돼요. 계속할까요?')) return;
-  state = defaultState();
-  renderAll();
-  markDirty.apply(null, FIELDS);
 });
 
 $('orderBtn').addEventListener('click', () => {
