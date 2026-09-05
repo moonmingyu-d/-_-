@@ -10,7 +10,8 @@
     "test:sync": "node tests/sync.e2e.mjs",
     "shots": "node tests/screenshots.mjs",
     "serve": "python3 -m http.server 8788 --directory public",
-    "verify:live": "node tests/verify-live.mjs"
+    "verify:live": "node tests/verify-live.mjs",
+    "test:reorder": "node tests/reorder.e2e.mjs"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^4.0.1",

@@ -129,6 +129,10 @@ const firebaseConfig = {
 - **방 코드** — 방 코드 확인·변경
 - **처음** — 맨 처음 계획으로 되돌리기 (양쪽 모두 바뀝니다)
 - **예약 전 / 예약 완료 태그** — 눌러서 바로 전환 (예: 래프팅 예약을 마치면 눌러서 완료로 표시)
+- **↕ 순서** — 누르면 항목마다 ▲▼ 가 나타나 위아래로 옮길 수 있어요.
+  새로 추가한 일정을 시간 순서에 맞게 끼워 넣을 때 쓰세요.
+  옮기는 동안에는 글자 수정과 삭제가 잠기고(오타·오삭제 방지), 다 옮겼으면 **✓ 완료**를 누릅니다.
+  일정 항목뿐 아니라 날짜(DAY) 카드, 예약, 예산, 체크리스트, 메모도 모두 옮길 수 있습니다.
 
 ---
 
@@ -162,6 +166,7 @@ npm run build:vendor    # Firebase SDK 를 public/vendor/firebase.js 로 묶기
 npm run emulators       # 로컬 Firebase 에뮬레이터 (Java 필요)
 npm run test:rules      # 보안 규칙 12가지 검증
 npm run test:sync       # 브라우저 창 2개로 실시간 동기화 13가지 검증 (에뮬레이터)
+npm run test:reorder    # 순서 바꾸기 13가지 검증 (에뮬레이터)
 LIVE=1 npm run test:sync   # 같은 검증을 실제 Firebase 프로젝트로 (인터넷 직결 필요)
 npm run verify:live     # 실제 프로젝트의 로그인·규칙·저장·읽기 확인
 ```

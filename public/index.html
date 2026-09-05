@@ -152,6 +152,26 @@
     font-size:17px;line-height:1;cursor:pointer;border-radius:6px;padding:0;
   }
   .del:hover,.del:focus{color:var(--danger);background:#F7E9E6;}
+  /* ---------- 순서 바꾸기 ---------- */
+  .mv{display:flex;gap:4px;flex:none;}
+  .mvb{
+    width:36px;height:36px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink-soft);font-size:11px;line-height:1;cursor:pointer;border-radius:7px;
+    padding:0;font-family:inherit;display:grid;place-items:center;
+  }
+  .mvb:disabled{opacity:.28;cursor:default;}
+  .mvb:hover:not(:disabled),.mvb:focus:not(:disabled){
+    border-color:var(--moss);color:var(--moss);background:var(--moss-dim);
+  }
+  .day-head .mvb{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);color:#fff;}
+  .day-head .mvb:disabled{opacity:.4;}
+  .reorder-hint{
+    font-size:12px;color:var(--moss);background:var(--moss-dim);border-radius:8px;
+    padding:9px 12px;margin-bottom:20px;
+  }
+  .reorder-hint[hidden],.edit-hint[hidden]{display:none;}
+  .btn.on{background:var(--moss);border-color:var(--moss);color:#fff;}
+
   .add{
     display:inline-flex;align-items:center;gap:5px;border:1px dashed var(--line);
     background:transparent;color:var(--ink-soft);font-size:13px;font-family:inherit;
@@ -205,7 +225,7 @@
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   }
   .btn-row{flex-wrap:wrap;}
-  .btn{min-width:76px;}
+  .btn{min-width:56px;white-space:nowrap;}   /* 버튼 5개가 한 줄에 · 글자는 접히지 않게 */
 
   /* 상대방이 방금 고친 곳 잠깐 강조 */
   @keyframes flashIn{from{background:#FFF3CF;}to{background:transparent;}}
@@ -223,7 +243,7 @@
     .box::after{content:"";position:absolute;left:50%;top:50%;
       width:40px;height:38px;transform:translate(-50%,-50%);}
     .add{padding:10px 14px;}
-    .btn{padding:12px 10px;}
+    .btn,.btn.quiet{padding:12px 10px;}   /* 좁은 버튼도 높이 44px 확보 */
   }
 
   /* ---------- 방 코드 화면 ---------- */
@@ -317,7 +337,9 @@
     </div>
   </header>
 
-  <p class="edit-hint">글자를 눌러 바로 고칠 수 있어요. 항목 오른쪽 ✕로 지우고, <b>+ 추가</b>로 새로 넣으면 됩니다. 고친 내용은 <b>자동으로 저장되어 상대방 화면에도 바로</b> 나타나요. 지금 쓰고 있는 칸은 상대방 수정으로 지워지지 않습니다.</p>
+  <p class="reorder-hint" id="reorderHint" hidden>▲ ▼ 로 항목을 위아래로 옮기세요. 다 옮겼으면 아래 <b>완료</b>를 누르면 됩니다. 순서를 바꾸는 동안에는 글자 수정과 삭제가 잠깁니다.</p>
+
+  <p class="edit-hint" id="editHint">글자를 눌러 바로 고칠 수 있어요. 항목 오른쪽 ✕로 지우고, <b>+ 추가</b>로 새로 넣으면 됩니다. 고친 내용은 <b>자동으로 저장되어 상대방 화면에도 바로</b> 나타나요. 지금 쓰고 있는 칸은 상대방 수정으로 지워지지 않습니다. 시간 순서를 바꾸려면 아래 <b>↕ 순서</b>를 누르세요.</p>
 
   <section>
     <div class="sec-head"><h2>확정 예약</h2></div>
@@ -372,6 +394,7 @@
       <button class="btn primary" id="backupBtn">내용 복사</button>
       <button class="btn" id="importBtn">붙여넣기</button>
       <button class="btn" id="reconnectBtn" hidden>다시 연결</button>
+      <button class="btn quiet" id="orderBtn">↕ 순서</button>
       <button class="btn quiet" id="roomBtn">방 코드</button>
       <button class="btn quiet" id="resetBtn">처음</button>
     </div>
@@ -533,6 +556,7 @@ function defaultState(){ return {
 
 /* ---------------- 유틸 ---------------- */
 let state = defaultState();
+let reorder = false;              // 순서 바꾸기 모드
 const $ = id => document.getElementById(id);
 // 편집 내용은 innerHTML을 그대로 쓰되, 위험 태그만 제거
 const clean = s => String(s).replace(/<(script|style|iframe|object|embed|link|meta)[^>]*>[\s\S]*?<\/\1>/gi,'')
@@ -542,10 +566,43 @@ const stamp = d => (d || new Date()).toLocaleTimeString('ko-KR',{hour:'2-digit',
 
 /* ---------------- 렌더 ---------------- */
 function ed(html, path){
-  return '<span contenteditable="true" data-path="' + path + '">' + html + '</span>';
+  return '<span contenteditable="' + (reorder ? 'false' : 'true') +
+         '" data-path="' + path + '">' + html + '</span>';
 }
 function delBtn(action, path){
   return '<button class="del" data-del="' + action + '" data-path="' + path + '" aria-label="삭제">&times;</button>';
+}
+
+/* 줄 오른쪽 버튼 — 평소엔 ✕, 순서 바꾸기 중에는 ▲▼ */
+function rowCtl(kind, path, i, n){
+  if(!reorder) return delBtn(kind, path);
+  return '<span class="mv">' + mvb(kind, path, -1, i === 0) + mvb(kind, path, 1, i === n - 1) + '</span>';
+}
+function mvb(kind, path, dir, off){
+  return '<button class="mvb" data-move="' + dir + '" data-kind="' + kind + '" data-path="' + path + '"' +
+    (off ? ' disabled' : '') + ' aria-label="' + (dir < 0 ? '위로 옮기기' : '아래로 옮기기') + '">' +
+    (dir < 0 ? '\u25B2' : '\u25BC') + '</button>';
+}
+
+/* 항목 종류 → 그 항목이 들어있는 배열과 위치 (옮기기·지우기가 같이 씁니다) */
+const FIELD_OF = {
+  bookings:'bookings', days:'days', dayItem:'days',
+  resortGroup:'resorts', resortItem:'resorts', budget:'budget',
+  chkGroup:'checklist', chkItem:'checklist', tips:'tips'
+};
+function listAt(kind, p){
+  switch(kind){
+    case 'bookings':    return [state.bookings, +p[0]];
+    case 'days':        return [state.days, +p[0]];
+    case 'dayItem':     return [state.days[+p[0]].items, +p[1]];
+    case 'resortGroup': return [state.resorts, +p[0]];
+    case 'resortItem':  return [state.resorts[+p[0]].items, +p[1]];
+    case 'budget':      return [state.budget, +p[0]];
+    case 'chkGroup':    return [state.checklist, +p[0]];
+    case 'chkItem':     return [state.checklist[+p[0]].items, +p[1]];
+    case 'tips':        return [state.tips, +p[0]];
+  }
+  return null;
 }
 
 function renderBookings(){
@@ -557,7 +614,7 @@ function renderBookings(){
             'aria-pressed="' + (b.done ? 'true' : 'false') + '">' + (b.done ? '예약 완료' : '예약 전') + '</button></div>' +
         '<div class="card-sub">' + ed(clean(b.s), 'bookings.'+i+'.s') + '</div>' +
         '<div class="card-sub" style="margin-top:3px;color:var(--water);font-weight:700;">' + ed(clean(b.p), 'bookings.'+i+'.p') + '</div>' +
-      '</div>' + delBtn('bookings', i) +
+      '</div>' + rowCtl('bookings', i, i, state.bookings.length) +
     '</div></div>'
   ).join('');
 }
@@ -569,14 +626,15 @@ function renderDays(){
         '<span class="day-n">DAY ' + (i+1) + '</span>' +
         '<span class="day-date">' + ed(clean(d.d), 'days.'+i+'.d') + '</span>' +
         '<span class="day-title">' + ed(clean(d.t), 'days.'+i+'.t') + '</span>' +
-        '<button class="del" data-del="days" data-path="' + i + '" aria-label="날짜 삭제" style="color:rgba(255,255,255,.7);">&times;</button>' +
+        (reorder ? rowCtl('days', i, i, state.days.length)
+                 : '<button class="del" data-del="days" data-path="' + i + '" aria-label="날짜 삭제" style="color:rgba(255,255,255,.7);">&times;</button>') +
       '</div>' +
       '<div class="day-body">' +
         d.items.map((it,j) =>
           '<div class="item">' +
             '<span class="item-time">' + ed(clean(it.time), 'days.'+i+'.items.'+j+'.time') + '</span>' +
             '<span class="item-text">' + ed(clean(it.text), 'days.'+i+'.items.'+j+'.text') + '</span>' +
-            delBtn('dayItem', i+'.'+j) +
+            rowCtl('dayItem', i+'.'+j, j, d.items.length) +
           '</div>'
         ).join('') +
         '<button class="add" data-add="dayItem" data-path="' + i + '">+ 일정 추가</button>' +
@@ -590,12 +648,12 @@ function renderResorts(){
     '<div class="list-box ' + (g.tone || '') + '">' +
       '<div style="display:flex;align-items:center;gap:8px;">' +
         '<h3 style="flex:1;">' + ed(clean(g.h), 'resorts.'+i+'.h') + '</h3>' +
-        delBtn('resortGroup', i) +
+        rowCtl('resortGroup', i, i, state.resorts.length) +
       '</div>' +
       g.items.map((t,j) =>
         '<div class="li"><span class="li-dot"></span>' +
           '<span class="li-text">' + ed(clean(t), 'resorts.'+i+'.items.'+j) + '</span>' +
-          delBtn('resortItem', i+'.'+j) +
+          rowCtl('resortItem', i+'.'+j, j, g.items.length) +
         '</div>'
       ).join('') +
       '<button class="add" data-add="resortItem" data-path="' + i + '">+ 항목 추가</button>' +
@@ -617,7 +675,7 @@ function renderBudget(){
       '<span class="b-label">' + ed(clean(b.l), 'budget.'+i+'.l') +
         '<span class="b-note">' + ed(clean(b.n), 'budget.'+i+'.n') + '</span></span>' +
       '<span class="b-cost">' + ed(clean(b.c), 'budget.'+i+'.c') + '</span>' +
-      delBtn('budget', i) +
+      rowCtl('budget', i, i, state.budget.length) +
     '</div>'
   ).join('');
 
@@ -645,13 +703,13 @@ function renderChecklist(){
     '<div class="list-box">' +
       '<div style="display:flex;align-items:center;gap:8px;">' +
         '<h3 style="flex:1;">' + ed(clean(g.h), 'checklist.'+i+'.h') + '</h3>' +
-        delBtn('chkGroup', i) +
+        rowCtl('chkGroup', i, i, state.checklist.length) +
       '</div>' +
       g.items.map((it,j) =>
         '<div class="chk" data-done="' + (it.d ? 'true' : 'false') + '">' +
           '<button class="box" role="checkbox" aria-checked="' + (it.d ? 'true' : 'false') + '" data-toggle="' + i + '.' + j + '">' + (it.d ? '✓' : '') + '</button>' +
           '<span class="chk-text">' + ed(clean(it.t), 'checklist.'+i+'.items.'+j+'.t') + '</span>' +
-          delBtn('chkItem', i+'.'+j) +
+          rowCtl('chkItem', i+'.'+j, j, g.items.length) +
         '</div>'
       ).join('') +
       '<button class="add" data-add="chkItem" data-path="' + i + '">+ 할 일 추가</button>' +
@@ -668,7 +726,7 @@ function renderTips(){
   $('tips').innerHTML = state.tips.map((t,i) =>
     '<div class="li"><span class="li-dot"></span>' +
       '<span class="li-text">' + ed(clean(t), 'tips.'+i) + '</span>' +
-      delBtn('tips', i) +
+      rowCtl('tips', i, i, state.tips.length) +
     '</div>'
   ).join('');
 }
@@ -984,21 +1042,34 @@ document.addEventListener('click', e => {
     return;
   }
 
+  const mv = e.target.closest('[data-move]');
+  if(mv){
+    const kind = mv.dataset.kind, path = mv.dataset.path, dir = +mv.dataset.move;
+    const loc = listAt(kind, path.split('.'));
+    if(!loc) return;
+    const arr = loc[0], i = loc[1], j = i + dir;
+    if(j < 0 || j >= arr.length) return;
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    const f = FIELD_OF[kind];
+    RENDER[f](); markDirty(f);
+    // 옮긴 항목을 눈으로 따라갈 수 있게 잠깐 표시
+    const parts = path.split('.'); parts[parts.length - 1] = String(j);
+    const moved = document.querySelector(
+      '[data-move][data-kind="' + kind + '"][data-path="' + parts.join('.') + '"]');
+    const row = moved && moved.closest('.item,.li,.chk,.brow,.card,.day,.list-box');
+    if(row){ row.classList.add('flash'); row.scrollIntoView({ block:'nearest' }); }
+    return;
+  }
+
   const del = e.target.closest('[data-del]');
   if(del){
-    const kind = del.dataset.del, p = del.dataset.path.split('.');
+    const kind = del.dataset.del;
+    const loc = listAt(kind, del.dataset.path.split('.'));
+    if(!loc) return;
     if(!confirm('이 항목을 지울까요?')) return;
-    let f = null;
-    if(kind === 'bookings'){ state.bookings.splice(+p[0],1); f='bookings'; }
-    else if(kind === 'days'){ state.days.splice(+p[0],1); f='days'; }
-    else if(kind === 'dayItem'){ state.days[+p[0]].items.splice(+p[1],1); f='days'; }
-    else if(kind === 'resortGroup'){ state.resorts.splice(+p[0],1); f='resorts'; }
-    else if(kind === 'resortItem'){ state.resorts[+p[0]].items.splice(+p[1],1); f='resorts'; }
-    else if(kind === 'budget'){ state.budget.splice(+p[0],1); f='budget'; }
-    else if(kind === 'chkGroup'){ state.checklist.splice(+p[0],1); f='checklist'; }
-    else if(kind === 'chkItem'){ state.checklist[+p[0]].items.splice(+p[1],1); f='checklist'; }
-    else if(kind === 'tips'){ state.tips.splice(+p[0],1); f='tips'; }
-    if(f){ RENDER[f](); markDirty(f); }
+    loc[0].splice(loc[1], 1);
+    const f = FIELD_OF[kind];
+    RENDER[f](); markDirty(f);
     return;
   }
 
@@ -1062,6 +1133,17 @@ $('resetBtn').addEventListener('click', () => {
   state = defaultState();
   renderAll();
   markDirty.apply(null, FIELDS);
+});
+
+$('orderBtn').addEventListener('click', () => {
+  reorder = !reorder;
+  const b = $('orderBtn');
+  b.classList.toggle('on', reorder);
+  b.textContent = reorder ? '\u2713 완료' : '\u2195 순서';
+  $('editHint').hidden = reorder;
+  $('reorderHint').hidden = !reorder;
+  renderAll();
+  fitBar();
 });
 
 $('roomBtn').addEventListener('click', () => {
