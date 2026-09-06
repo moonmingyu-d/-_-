@@ -85,6 +85,35 @@ await shouldFail('문서 삭제는 차단됨 (사고 방지)',
 await shouldFail('rooms 밖의 경로는 차단됨',
   () => getDoc(doc(db, 'secrets', 'anything')));
 
+/* 8. 사진 — 실제로 올리고 읽고 지워봅니다 (뒤처리까지) */
+const PH = (extra = {}) => ({
+  thumb: 'data:image/jpeg;base64,' + 'A'.repeat(400),
+  full:  'data:image/jpeg;base64,' + 'A'.repeat(4000),
+  w: 1280, h: 853, by: uid, ...extra
+});
+const phRef = (id = 'verify1', room = GOOD) => doc(db, 'rooms', room, 'photos', id);
+
+await shouldPass('사진 올리기 (rooms/{방}/photos 경로가 열려 있음)',
+  () => setDoc(phRef(), PH()));
+
+await shouldPass('올린 사진 다시 읽기', async () => {
+  const s = await getDoc(phRef());
+  if(!s.exists()) throw new Error('사진 문서가 없음');
+  if(s.data().w !== 1280) throw new Error('내용이 다름');
+});
+
+await shouldFail('사진: 앱이 쓰지 않는 필드가 섞이면 거부',
+  () => setDoc(phRef('verify2'), PH({ evil: 'x' })));
+await shouldFail('사진: 남의 이름으로 올리면 거부',
+  () => setDoc(phRef('verify3'), PH({ by: 'someone-else' })));
+await shouldFail('사진: 한도(700KB)를 넘으면 거부',
+  () => setDoc(phRef('verify4'), PH({ full: 'A'.repeat(700001) })));
+await shouldFail('사진: 짧은 방 코드에는 올릴 수 없음',
+  () => setDoc(phRef('verify5', SHORT), PH()));
+
+await shouldPass('사진 지우기 (잘못 올린 사진 정리 가능)',
+  () => deleteDoc(phRef()));
+
 console.log(`\n통과 ${passed}개 / 실패 ${failed}개`);
-if(failed === 0) console.log(`\n남은 정리: Firestore 콘솔에서 rooms/${GOOD} 문서 하나만 지워주세요 (검증용).`);
+if(failed === 0) console.log(`\n검증용 사진은 스스로 지웠습니다. 콘솔에는 rooms/${GOOD} 문서 하나만 남아 있습니다.`);
 process.exit(failed ? 1 : 0);
