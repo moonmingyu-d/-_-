@@ -182,6 +182,7 @@ npm run test:rules      # 보안 규칙 12가지 검증
 npm run test:sync       # 브라우저 창 2개로 실시간 동기화 13가지 검증 (에뮬레이터)
 npm run test:reorder    # 순서 바꾸기 13가지 검증 (에뮬레이터)
 npm run test:photos     # 사진 첨부 13가지 검증 (에뮬레이터)
+npm run test:bundle     # index.html 이 쓰는 기능이 번들에 다 있는지 (에뮬레이터 불필요)
 LIVE=1 npm run test:sync   # 같은 검증을 실제 Firebase 프로젝트로 (인터넷 직결 필요)
 npm run verify:live     # 실제 프로젝트의 로그인·규칙·저장·읽기 확인
 ```
@@ -205,8 +206,12 @@ npm run verify:live     # 실제 프로젝트의 로그인·규칙·저장·읽�
   무거워지지 않고, 미리보기(240px)를 따로 담아 목록 렌더링이 가볍습니다.
   3000×2000 / 209KB 사진이 1280×853 / 74KB 로 줄어드는 것을 확인했습니다.
   어느 일정에 붙었는지는 그 항목 안에 사진 id 만 적어 두므로 순서 변경·삭제가 자연스럽게 따라갑니다.
-- Firebase SDK 는 CDN 대신 `public/vendor/firebase.js` 로 함께 배포합니다.
-  외부 CDN 사정과 무관하게 항상 뜹니다.
+- Firebase SDK 는 CDN 대신 `public/vendor/firebase.<해시>.js` 로 함께 배포합니다.
+  외부 CDN 사정과 무관하게 항상 뜨고, **파일 이름에 내용 지문이 붙어 있어**
+  내용이 바뀌면 주소도 바뀝니다. 브라우저에 캐시된 옛 번들을 새 `index.html` 이
+  불러와 앱 전체가 죽는 사고를 막기 위한 것입니다(실제로 한 번 겪었습니다).
+  `npm run build:vendor` 가 해시 계산과 `index.html` 의 import 주소 수정까지 자동으로 합니다.
+  `npm run test:bundle` 이 이 짝이 맞는지 검사합니다.
 
 ---
 
