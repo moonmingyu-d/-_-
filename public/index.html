@@ -152,6 +152,42 @@
     font-size:17px;line-height:1;cursor:pointer;border-radius:6px;padding:0;
   }
   .del:hover,.del:focus{color:var(--danger);background:#F7E9E6;}
+  /* ---------- 사진 ---------- */
+  .cam{
+    flex:none;width:26px;height:26px;border:0;background:transparent;color:#B9C2BB;
+    font-size:15px;line-height:1;cursor:pointer;border-radius:6px;padding:0;
+  }
+  .cam:hover,.cam:focus{color:var(--moss);background:var(--moss-dim);}
+  .card .cam,.item .cam{margin-right:-2px;}
+  .ph-strip{display:flex;gap:6px;margin:8px 0 1px;flex-wrap:wrap;}
+  .ph-thumb{
+    width:74px;height:74px;border-radius:8px;overflow:hidden;padding:0;
+    border:1px solid var(--line);background:var(--moss-dim);flex:none;cursor:pointer;display:block;
+  }
+  .ph-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ph-thumb img:not([src]){visibility:hidden;}
+
+  /* 사진 크게 보기 */
+  .viewer{
+    position:fixed;inset:0;z-index:70;background:#0F1A15;   /* 사진에 집중되도록 완전 불투명 */
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:16px 16px calc(16px + env(safe-area-inset-bottom));
+  }
+  .viewer[hidden]{display:none;}
+  .viewer-n{color:rgba(255,255,255,.82);font-size:12.5px;margin:0 0 10px;text-align:center;}
+  .viewer img{max-width:100%;max-height:70vh;border-radius:10px;display:block;}
+  .viewer-bar{display:flex;gap:7px;margin-top:14px;width:100%;max-width:520px;}
+  .viewer-bar .btn{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:#fff;}
+  .viewer-bar .btn:hover,.viewer-bar .btn:focus{background:rgba(255,255,255,.22);color:#fff;}
+  .viewer-bar .btn.danger{background:rgba(166,61,47,.55);border-color:rgba(255,180,166,.5);}
+  .viewer-bar .btn:disabled{opacity:.3;}
+
+  @media (pointer:coarse){
+    .cam{position:relative;}
+    .cam::after{content:"";position:absolute;left:50%;top:50%;
+      width:40px;height:38px;transform:translate(-50%,-50%);}
+  }
+
   /* ---------- 순서 바꾸기 ---------- */
   .mv{display:flex;gap:4px;flex:none;}
   .mvb{
@@ -386,6 +422,20 @@
   <footer>행복한 첫 신혼여행 되세요 🌴</footer>
 </div>
 
+<div class="viewer" id="viewer" hidden>
+  <p class="viewer-n" id="viewerN"></p>
+  <img id="viewerImg" alt="">
+  <div class="viewer-bar">
+    <button class="btn" id="vPrev">‹ 이전</button>
+    <button class="btn" id="vNext">다음 ›</button>
+    <button class="btn danger" id="vDel">삭제</button>
+    <button class="btn" id="vClose">닫기</button>
+  </div>
+</div>
+
+<input type="file" id="photoInput" accept="image/*" multiple
+       style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
+
 <div class="bar" id="bar" hidden>
   <div class="bar-in">
     <span class="status" id="status"><span class="dot"></span>연결하는 중…</span>
@@ -418,7 +468,7 @@ const FIREBASE_CONFIG = {
 import {
   initializeApp, getAuth, signInAnonymously, onAuthStateChanged,
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  doc, onSnapshot, setDoc, serverTimestamp,
+  doc, collection, onSnapshot, setDoc, deleteDoc, serverTimestamp,
   enableNetwork, disableNetwork,
   connectAuthEmulator, connectFirestoreEmulator
 } from './vendor/firebase.js';
@@ -611,9 +661,11 @@ function renderBookings(){
             'aria-pressed="' + (b.done ? 'true' : 'false') + '">' + (b.done ? '예약 완료' : '예약 전') + '</button></div>' +
         '<div class="card-sub">' + ed(clean(b.s), 'bookings.'+i+'.s') + '</div>' +
         '<div class="card-sub" style="margin-top:3px;color:var(--water);font-weight:700;">' + ed(clean(b.p), 'bookings.'+i+'.p') + '</div>' +
-      '</div>' + rowCtl('bookings', i, i, state.bookings.length) +
+        photoStrip('bookings', i, b.photos) +
+      '</div>' + camBtn('bookings', i) + rowCtl('bookings', i, i, state.bookings.length) +
     '</div></div>'
   ).join('');
+  paintPhotos();
 }
 
 function renderDays(){
@@ -630,7 +682,9 @@ function renderDays(){
         d.items.map((it,j) =>
           '<div class="item">' +
             '<span class="item-time">' + ed(clean(it.time), 'days.'+i+'.items.'+j+'.time') + '</span>' +
-            '<span class="item-text">' + ed(clean(it.text), 'days.'+i+'.items.'+j+'.text') + '</span>' +
+            '<span class="item-text">' + ed(clean(it.text), 'days.'+i+'.items.'+j+'.text') +
+              photoStrip('dayItem', i+'.'+j, it.photos) + '</span>' +
+            camBtn('dayItem', i+'.'+j) +
             rowCtl('dayItem', i+'.'+j, j, d.items.length) +
           '</div>'
         ).join('') +
@@ -638,6 +692,7 @@ function renderDays(){
       '</div>' +
     '</div>'
   ).join('');
+  paintPhotos();
 }
 
 function renderResorts(){
@@ -976,6 +1031,19 @@ async function connect(code){
   if(unsub) unsub();
   seeded = false;
   unsub = onSnapshot(docRef, { includeMetadataChanges:true }, onSnap, onSnapError);
+
+  if(unsubPhotos) unsubPhotos();
+  PHOTOS.clear();
+  unsubPhotos = onSnapshot(photoCol(), snap => {
+    snap.docChanges().forEach(ch => {
+      if(ch.type === 'removed') PHOTOS.delete(ch.doc.id);
+      else PHOTOS.set(ch.doc.id, ch.doc.data());
+    });
+    paintPhotos();
+  }, err => {
+    if(err && err.code === 'permission-denied')
+      flashNotice('사진을 쓰려면 Firestore 보안 규칙을 다시 붙여넣어야 해요');
+  });
 }
 
 /* ---------------- 편집 ---------------- */
@@ -1039,6 +1107,19 @@ document.addEventListener('click', e => {
     return;
   }
 
+  const cam = e.target.closest('[data-cam]');
+  if(cam){
+    camTarget = { kind: cam.dataset.cam, path: cam.dataset.path };
+    $('photoInput').click();
+    return;
+  }
+
+  const openPh = e.target.closest('[data-open]');
+  if(openPh){
+    openViewer(openPh.dataset.open, openPh.dataset.path, +openPh.dataset.at);
+    return;
+  }
+
   const mv = e.target.closest('[data-move]');
   if(mv){
     const kind = mv.dataset.kind, path = mv.dataset.path, dir = +mv.dataset.move;
@@ -1064,7 +1145,7 @@ document.addEventListener('click', e => {
     const loc = listAt(kind, del.dataset.path.split('.'));
     if(!loc) return;
     if(!confirm('이 항목을 지울까요?')) return;
-    loc[0].splice(loc[1], 1);
+    dropPhotos(photoIdsIn(loc[0].splice(loc[1], 1)[0]));
     const f = FIELD_OF[kind];
     RENDER[f](); markDirty(f);
     return;
@@ -1188,6 +1269,176 @@ $('joinBtn').addEventListener('click', () => {
 $('roomInput').addEventListener('keydown', e => { if(e.key === 'Enter') $('joinBtn').click(); });
 
 window.addEventListener('offline', () => { online = false; updateStatus(); });
+
+/* ==========================================================================
+   사진 — 압축해서 Firestore 에 바로 저장합니다 (Storage 는 카드 등록이 필요해서 안 씁니다)
+   rooms/{방코드}/photos/{사진id} = { thumb, full, w, h, by }
+   어느 일정에 붙었는지는 그 일정 안에 사진 id 만 적어 두므로,
+   항목을 옮기거나 지우면 사진도 같이 따라갑니다.
+   ========================================================================== */
+const PHOTO_MAX = 1280;      // 긴 변 픽셀
+const THUMB_MAX = 240;
+const PHOTO_CAP = 620000;    // 한 장이 차지할 수 있는 최대 글자수 (문서 1MB 한도 안쪽)
+const PHOTOS = new Map();    // 사진id -> {thumb, full}
+const HOST_FIELD = { dayItem:'days', bookings:'bookings' };
+let unsubPhotos = null, camTarget = null;
+let viewerList = [], viewerAt = 0, viewerHost = null;
+
+const photoCol = () => collection(db, 'rooms', roomCode, 'photos');
+const newPhotoId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+function photoHost(kind, p){
+  if(kind === 'dayItem'){ const d = state.days[+p[0]]; return d && d.items[+p[1]]; }
+  if(kind === 'bookings') return state.bookings[+p[0]];
+  return null;
+}
+function camBtn(kind, path){
+  if(reorder) return '';
+  return '<button class="cam" data-cam="' + kind + '" data-path="' + path +
+         '" aria-label="사진 추가">📷</button>';
+}
+function photoStrip(kind, path, ids){
+  if(!Array.isArray(ids) || !ids.length) return '';
+  return '<span class="ph-strip">' + ids.map((id, k) =>
+    '<button class="ph-thumb" data-open="' + kind + '" data-path="' + path + '" data-at="' + k +
+    '" aria-label="사진 크게 보기"><img data-photo="' + id + '" alt=""></button>').join('') + '</span>';
+}
+/* 다시 그리지 않고 사진만 채워 넣습니다 (편집 중인 칸을 건드리지 않으려고) */
+function paintPhotos(){
+  document.querySelectorAll('img[data-photo]').forEach(img => {
+    if(img.dataset.painted) return;
+    const p = PHOTOS.get(img.dataset.photo);
+    if(p && p.thumb){ img.src = p.thumb; img.dataset.painted = '1'; }
+  });
+}
+
+/* 휴대폰 사진은 그대로 넣으면 너무 크므로 줄이고 압축합니다 */
+async function shrink(file){
+  let bmp;
+  try{ bmp = await createImageBitmap(file, { imageOrientation:'from-image' }); }
+  catch(e){ bmp = await createImageBitmap(file); }        // 방향 보정 미지원 브라우저
+  const draw = (maxSide, q) => {
+    const r = Math.min(1, maxSide / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(bmp.width * r));
+    c.height = Math.max(1, Math.round(bmp.height * r));
+    const g = c.getContext('2d');
+    g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);   // 투명 PNG 대비
+    g.drawImage(bmp, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', q);
+  };
+  let side = PHOTO_MAX, q = 0.74, full = draw(side, q);
+  while(full.length > PHOTO_CAP && (q > 0.4 || side > 640)){
+    if(q > 0.4) q = Math.round((q - 0.1) * 100) / 100; else side = Math.round(side * 0.8);
+    full = draw(side, q);
+  }
+  const out = { full, thumb: draw(THUMB_MAX, 0.6), w: bmp.width, h: bmp.height };
+  if(bmp.close) bmp.close();
+  return out;
+}
+
+async function addPhotos(kind, path, files){
+  if(!docRef) return;
+  const f = HOST_FIELD[kind];
+  let added = 0;
+  for(let i = 0; i < files.length; i++){
+    flashNotice('사진 줄이는 중… (' + (i + 1) + '/' + files.length + ')');
+    let img;
+    try{ img = await shrink(files[i]); }
+    catch(e){ flashNotice('이 사진은 읽지 못했어요'); continue; }
+    if(img.full.length > PHOTO_CAP){ flashNotice('사진이 너무 커서 넣지 못했어요'); continue; }
+
+    // 압축하는 사이 상대방 수정으로 목록이 바뀌었을 수 있으니 다시 찾습니다
+    const host = photoHost(kind, path.split('.'));
+    if(!host){ flashNotice('사진을 붙일 항목이 사라졌어요'); break; }
+
+    const id = newPhotoId();
+    PHOTOS.set(id, img);                       // 내 화면에는 바로 보이게
+    setDoc(doc(photoCol(), id),
+      { thumb: img.thumb, full: img.full, w: img.w, h: img.h, by: uid }
+    ).catch(err => {
+      PHOTOS.delete(id);
+      setStatus(err && err.code === 'permission-denied'
+        ? '사진 저장 거부됨 — Firestore 보안 규칙을 다시 붙여넣어 주세요'
+        : '사진 저장 실패 — ' + (err && err.message ? err.message : ''), 'err', 'off');
+    });
+    if(!Array.isArray(host.photos)) host.photos = [];
+    host.photos.push(id);
+    added++;
+  }
+  if(added){ RENDER[f](); markDirty(f); paintPhotos(); }
+}
+
+/* 항목을 지울 때 딸린 사진도 함께 지웁니다 (날짜 카드째 지우면 그 안의 것까지) */
+function photoIdsIn(o){
+  let out = [];
+  if(!o || typeof o !== 'object') return out;
+  if(Array.isArray(o.photos)) out = out.concat(o.photos);
+  if(Array.isArray(o.items)) o.items.forEach(x => { out = out.concat(photoIdsIn(x)); });
+  return out;
+}
+function dropPhotos(ids){
+  ids.forEach(id => {
+    PHOTOS.delete(id);
+    if(docRef) deleteDoc(doc(photoCol(), id)).catch(() => {});
+  });
+}
+
+/* ---- 크게 보기 ---- */
+function openViewer(kind, path, at){
+  const host = photoHost(kind, path.split('.'));
+  if(!host || !Array.isArray(host.photos) || !host.photos.length) return;
+  viewerHost = { kind, path };
+  viewerList = host.photos.slice();
+  viewerAt = Math.max(0, Math.min(at, viewerList.length - 1));
+  showViewer();
+}
+function showViewer(){
+  const p = PHOTOS.get(viewerList[viewerAt]);
+  const img = $('viewerImg');
+  if(p && (p.full || p.thumb)) img.src = p.full || p.thumb; else img.removeAttribute('src');
+  $('viewerN').textContent = (viewerAt + 1) + ' / ' + viewerList.length +
+    (p ? '' : ' · 아직 받는 중…');
+  $('vPrev').disabled = viewerAt === 0;
+  $('vNext').disabled = viewerAt >= viewerList.length - 1;
+  $('viewer').hidden = false;
+}
+function closeViewer(){ $('viewer').hidden = true; $('viewerImg').removeAttribute('src'); }
+
+$('vPrev').addEventListener('click', () => { if(viewerAt > 0){ viewerAt--; showViewer(); } });
+$('vNext').addEventListener('click', () => { if(viewerAt < viewerList.length - 1){ viewerAt++; showViewer(); } });
+$('vClose').addEventListener('click', closeViewer);
+$('viewer').addEventListener('click', e => { if(e.target === $('viewer')) closeViewer(); });
+document.addEventListener('keydown', e => {
+  if($('viewer').hidden) return;
+  if(e.key === 'Escape') closeViewer();
+  else if(e.key === 'ArrowLeft') $('vPrev').click();
+  else if(e.key === 'ArrowRight') $('vNext').click();
+});
+
+$('vDel').addEventListener('click', () => {
+  if(!viewerList.length || !confirm('이 사진을 지울까요?')) return;
+  const id = viewerList[viewerAt];
+  const host = photoHost(viewerHost.kind, viewerHost.path.split('.'));
+  if(host && Array.isArray(host.photos)){
+    const i = host.photos.indexOf(id);
+    if(i >= 0) host.photos.splice(i, 1);
+    const f = HOST_FIELD[viewerHost.kind];
+    RENDER[f](); markDirty(f); paintPhotos();
+  }
+  dropPhotos([id]);
+  viewerList.splice(viewerAt, 1);
+  if(!viewerList.length){ closeViewer(); return; }
+  if(viewerAt >= viewerList.length) viewerAt = viewerList.length - 1;
+  showViewer();
+});
+
+$('photoInput').addEventListener('change', async e => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';                       // 같은 사진을 다시 골라도 동작하도록
+  const t = camTarget; camTarget = null;
+  if(files.length && t) await addPhotos(t.kind, t.path, files);
+});
 
 /* ---------------- 시작 ---------------- */
 renderAll();                                   // 연결 전에도 계획이 바로 보이게

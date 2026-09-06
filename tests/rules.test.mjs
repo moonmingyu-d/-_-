@@ -99,3 +99,52 @@ test('바뀐 항목만 보내는 부분 저장(merge)이 통과한다', async ()
   await assertSucceeds(setDoc(doc(db, 'rooms', GOOD),
     { tips: JSON.stringify(['메모']), updatedBy: 'husband' }, { merge: true }));
 });
+
+/* ---------------- 사진 ---------------- */
+const photo = (extra = {}) => ({
+  thumb: 'data:image/jpeg;base64,' + 'A'.repeat(500),
+  full:  'data:image/jpeg;base64,' + 'A'.repeat(5000),
+  w: 1280, h: 960, by: 'husband', ...extra
+});
+const photoRef = (db, room = GOOD, id = 'p1') => doc(db, 'rooms', room, 'photos', id);
+
+test('사진: 로그인하지 않으면 읽지도 쓰지도 못한다', async () => {
+  await assertFails(setDoc(photoRef(asGuest()), photo()));
+  await assertFails(getDoc(photoRef(asGuest())));
+});
+
+test('사진: 로그인한 사람은 올리고 읽을 수 있다', async () => {
+  await assertSucceeds(setDoc(photoRef(asUser('husband')), photo()));
+  await assertSucceeds(getDoc(photoRef(asUser('husband'))));
+});
+
+test('사진: 배우자도 같은 방의 사진을 읽고 지울 수 있다', async () => {
+  await assertSucceeds(setDoc(photoRef(asUser('husband')), photo()));
+  await assertSucceeds(getDoc(photoRef(asUser('wife'))));
+  await assertSucceeds(deleteDoc(photoRef(asUser('wife'))));
+});
+
+test('사진: 짧은 방 코드에는 올릴 수 없다', async () => {
+  await assertFails(setDoc(photoRef(asUser('husband'), SHORT), photo()));
+});
+
+test('사진: 남의 이름으로 올리면 거부된다', async () => {
+  await assertFails(setDoc(photoRef(asUser('husband')), photo({ by: 'someone-else' })));
+});
+
+test('사진: 앱이 쓰지 않는 필드가 섞이면 거부된다', async () => {
+  await assertFails(setDoc(photoRef(asUser('husband')), photo({ evil: 'x' })));
+});
+
+test('사진: 원본이 한도(700KB)를 넘으면 거부된다', async () => {
+  await assertFails(setDoc(photoRef(asUser('husband')), photo({ full: 'A'.repeat(700001) })));
+});
+
+test('사진: 미리보기가 한도(60KB)를 넘으면 거부된다', async () => {
+  await assertFails(setDoc(photoRef(asUser('husband')), photo({ thumb: 'A'.repeat(60001) })));
+});
+
+test('사진: 계획 본문 문서는 여전히 삭제할 수 없다', async () => {
+  await assertSucceeds(setDoc(doc(asUser('husband'), 'rooms', GOOD), plan({ updatedBy: 'husband' })));
+  await assertFails(deleteDoc(doc(asUser('husband'), 'rooms', GOOD)));
+});

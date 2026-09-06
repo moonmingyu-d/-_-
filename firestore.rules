@@ -7,7 +7,8 @@ rules_version = '2';
 //   2) 방 코드가 곧 비밀번호입니다. 그래서 12자 미만의 짧은 코드는 아예 못 만들게 막습니다.
 //      (앱의 "새 방 만들기"가 만드는 코드는 19자, 조합이 약 10^18 가지라 찍어 맞히기 어렵습니다)
 //   3) 이 앱이 쓰는 모양의 문서만 허용합니다. 엉뚱한 필드나 거대한 데이터는 거부합니다.
-//   4) rooms 말고 다른 경로는 전부 막습니다. 삭제도 막아서 사고로 날아가지 않게 합니다.
+//   4) rooms 말고 다른 경로는 전부 막습니다. 계획 본문은 삭제도 막아서 사고로 날아가지 않게 합니다.
+//      (사진은 잘못 올릴 수 있으니 삭제를 허용합니다)
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -45,6 +46,22 @@ service cloud.firestore {
       allow read:           if signedIn() && goodRoomId();
       allow create, update: if signedIn() && goodRoomId() && validDoc();
       allow delete:         if false;
+
+      // 사진은 한 장에 문서 하나. 계획 본문이 무거워지지 않게 따로 둡니다.
+      // (Cloud Storage 는 2026년부터 카드 등록이 필요해져서 쓰지 않습니다)
+      match /photos/{photoId} {
+        function validPhoto() {
+          let d = request.resource.data;
+          return d.keys().hasOnly(['thumb','full','w','h','by'])
+              && d.thumb is string && d.thumb.size() <= 60000
+              && d.full  is string && d.full.size()  <= 700000
+              && d.w is number && d.h is number
+              && d.by == request.auth.uid;
+        }
+        allow read:           if signedIn() && goodRoomId();
+        allow create, update: if signedIn() && goodRoomId() && validPhoto();
+        allow delete:         if signedIn() && goodRoomId();   // 잘못 올린 사진은 지울 수 있어야 함
+      }
     }
 
     // 그 밖의 모든 경로는 차단

@@ -10,7 +10,7 @@ export {
 } from 'firebase/auth';
 export {
   initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  doc, onSnapshot, setDoc, getDoc, serverTimestamp,
+  doc, collection, onSnapshot, setDoc, getDoc, deleteDoc, serverTimestamp,
   enableNetwork, disableNetwork, connectFirestoreEmulator
 } from 'firebase/firestore';
 `;
